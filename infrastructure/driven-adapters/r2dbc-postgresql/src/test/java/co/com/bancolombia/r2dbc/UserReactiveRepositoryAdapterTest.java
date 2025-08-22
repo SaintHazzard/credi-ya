@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntity;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntityRepository;
+import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.entities.userentity.UserReactiveEntityRepositoryAdapater;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,10 +18,10 @@ import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class UserReactiveRepositoryAdapterTest {
-    // TODO: change four you own tests
 
     @InjectMocks
     UserReactiveEntityRepositoryAdapater repositoryAdapter;
@@ -30,14 +30,14 @@ class UserReactiveRepositoryAdapterTest {
     UserEntityRepository repository;
 
     @Mock
-    ObjectMapper mapper;
+    UserMapper mapper;
 
     @Test
     void mustFindValueById() {
 
-        var userEntity = org.mockito.Mockito.mock(UserEntity.class);
+        var userEntity = mock(UserEntity.class);
         when(repository.findById("1")).thenReturn(Mono.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(org.mockito.Mockito.mock(User.class));
+        when(mapper.toDomain(userEntity)).thenReturn(mock(User.class));
 
         Mono<User> result = repositoryAdapter.findById("1");
 
@@ -50,36 +50,43 @@ class UserReactiveRepositoryAdapterTest {
     void mustFindAllValues() {
         UserEntity userEntity = org.mockito.Mockito.mock(UserEntity.class);
         when(repository.findAll()).thenReturn(Flux.just(userEntity));
-        when(mapper.map(userEntity, Object.class)).thenReturn("test");
+        when(mapper.toDomain(userEntity)).thenReturn(mock(User.class));
 
-        Flux<Object> result = repositoryAdapter.findAll();
+        Flux<User> result = repositoryAdapter.findAll();
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNextMatches(value -> value instanceof User)
                 .verifyComplete();
     }
 
     @Test
     void mustFindByExample() {
-        when(repository.findAll(any(Example.class))).thenReturn(Flux.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
+        UserEntity userEntity = mock(UserEntity.class);
+        User user = mock(User.class);
+        @SuppressWarnings("unchecked")
+        Example<UserEntity> example = (Example<UserEntity>) any(Example.class);
+        when(repository.findAll(example)).thenReturn(Flux.just(userEntity));
+        when(mapper.toDomain(userEntity)).thenReturn(user);
 
-        Flux<Object> result = repositoryAdapter.findByExample("test");
+        Flux<User> result = repositoryAdapter.findByExample(user); 
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNext(user)
                 .verifyComplete();
     }
 
     @Test
     void mustSaveValue() {
-        when(repository.save("test")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
+        UserEntity userEntity = mock(UserEntity.class);
+        User domainObject = new User("123", "John Doe", "Paquito", "john.doe@example.com");
+        when(mapper.toEntity(domainObject)).thenReturn(userEntity);
+        when(repository.save(userEntity)).thenReturn(Mono.just(userEntity));
+        when(mapper.toDomain(userEntity)).thenReturn(domainObject);
 
-        Mono<Object> result = repositoryAdapter.save("test");
+        Mono<User> result = repositoryAdapter.save(domainObject);
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNextMatches(value -> value.equals(domainObject))
                 .verifyComplete();
     }
 }

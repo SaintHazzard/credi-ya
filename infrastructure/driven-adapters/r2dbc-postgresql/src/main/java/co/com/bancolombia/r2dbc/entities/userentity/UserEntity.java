@@ -1,18 +1,18 @@
 package co.com.bancolombia.r2dbc.entities.userentity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.relational.core.mapping.Column;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
-@Table(name = "users")
+@Table("users")
+@Data
 public class UserEntity {
-  
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @NotNull
@@ -25,7 +25,6 @@ public class UserEntity {
 
   @NotNull
   @NotBlank
-  private String correo_electronico;
-
-
+  @Column("correo_electronico")
+  private String correoElectronico;
 }
