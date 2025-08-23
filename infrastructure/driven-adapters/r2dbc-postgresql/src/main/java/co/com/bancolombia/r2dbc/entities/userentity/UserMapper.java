@@ -1,4 +1,4 @@
-package co.com.bancolombia.mappers;
+package co.com.bancolombia.r2dbc.entities.userentity;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.r2dbc.dtos.user.UserDTO;
 import co.com.bancolombia.r2dbc.dtos.user.UserRecord;
-import co.com.bancolombia.r2dbc.entities.userentity.UserEntity;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

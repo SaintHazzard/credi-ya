@@ -1,9 +1,10 @@
+plugins {
+  id 'java'
+}
+
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-	implementation project(':exeption-handler')
-	implementation project(':mappers')
-    implementation project(':validation-handler')
 	implementation 'org.reactivecommons.utils:object-mapper:0.1.0'
 	implementation project(':r2dbc-postgresql')
 	implementation project(':reactive-web')

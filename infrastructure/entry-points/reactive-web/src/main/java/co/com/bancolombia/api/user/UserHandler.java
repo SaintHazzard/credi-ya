@@ -1,15 +1,14 @@
 package co.com.bancolombia.api.user;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import co.com.bancolombia.mappers.UserMapper;
 import co.com.bancolombia.r2dbc.dtos.user.UserDTO;
+import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
+import co.com.bancolombia.r2dbc.helper.utilities.ValidationHandler;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
-import co.com.bancolombia.validationhandler.ValidationHandler;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -35,15 +34,13 @@ public class UserHandler {
                 .onErrorResume(e -> ServerResponse.badRequest().bodyValue(e.getMessage()));
     }
 
-    public Mono<ServerResponse> listenCreateUser(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(UserDTO.class)
+    public Mono<ServerResponse> listenCreateUser(ServerRequest req) {
+        return req.bodyToMono(UserDTO.class)
                 .flatMap(validationHandler::validate)
                 .map(userMapper::toDomain)
                 .flatMap(delegate::createUser)
                 .map(userMapper::toDto)
-                .flatMap(dto -> ServerResponse.ok().bodyValue(dto))
-                .onErrorResume(WebExchangeBindException.class,
-                        e -> ServerResponse.badRequest().bodyValue(e.getAllErrors()));
+                .flatMap(ServerResponse.ok()::bodyValue);
     }
 
 }

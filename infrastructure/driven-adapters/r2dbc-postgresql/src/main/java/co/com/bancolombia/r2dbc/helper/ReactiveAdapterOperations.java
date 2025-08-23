@@ -4,6 +4,8 @@ import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
 import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+
+import co.com.bancolombia.r2dbc.helper.utilities.ExceptionTranslator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +37,7 @@ public abstract class ReactiveAdapterOperations<E, D, I, R extends ReactiveCrudR
 
     public Mono<E> save(E entity) {
         return saveData(toData(entity))
-                .map(this::toEntity);
+                .map(this::toEntity).onErrorMap(new ExceptionTranslator()::translate);
     }
 
     protected Flux<E> saveAllEntities(Flux<E> entities) {

@@ -15,7 +15,7 @@ public class DeletegateCrearUser {
   }
 
   public Mono<User> createUser(User user) {
-    if (user.getNombres().length() > 25) {
+    if (user.getNames().length() > 25) {
       return strategies.get(CrearUserStrategy.RESILIENTE).createUser(user);
     }
     return strategies.get(CrearUserStrategy.SIMPLE).createUser(user);

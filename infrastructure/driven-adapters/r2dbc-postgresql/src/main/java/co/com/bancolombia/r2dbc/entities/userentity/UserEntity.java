@@ -9,6 +9,8 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -42,7 +44,9 @@ public class UserEntity {
   private String email;
 
   @NotNull(message = "El salario base es obligatorio")
-  @Digits(integer = 10, fraction = 2, message = "Formato de salario inválido")
+  @Digits(integer = 15, fraction = 0, message = "Formato de salario inválido")
+  @Max(value = 15000000, message = "El salario base no puede ser mayor a 15000000")
+  @Min(value = 0, message = "El salario base no puede ser menor a 0")
   @Column("salary_base")
   private BigDecimal salaryBase;
 }
