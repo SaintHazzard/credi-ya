@@ -20,7 +20,6 @@ import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
 @Configuration
 public class UserManagementUseCasesConfig {
 
-  
   @Bean
   public DeletegateCrearUser delegateCrearUserUseCase(List<CrearUsuarioStrategy> strategies) {
     Map<CrearUserStrategy, CrearUsuarioStrategy> map = strategies.stream()
@@ -29,27 +28,25 @@ public class UserManagementUseCasesConfig {
     return new DeletegateCrearUser(map);
   }
 
-
-   @Bean
-    public CrearUsuarioStrategy crearUserSimpleStrategy(UserRepository repo) {
-        return new CrearUserUseCase(repo);
-    }
-
-    @Bean
-    public CrearUsuarioStrategy crearUserResilienteStrategy(UserRepository repo, ResilienceService resilience) {
-        return new CrearUserCaseResilience(repo, resilience);
-    }
+  @Bean
+  public CrearUsuarioStrategy crearUserSimpleStrategy(UserRepository repo) {
+    return new CrearUserUseCase(repo);
+  }
 
   @Bean
-    public ActualizarUserUseCase actualizarUserUseCase(UserRepository repo) { 
-      return new ActualizarUserUseCase(repo);
-    }
+  public CrearUsuarioStrategy crearUserResilienteStrategy(UserRepository repo, ResilienceService resilience) {
+    return new CrearUserCaseResilience(repo, resilience);
+  }
 
   @Bean
-    public EliminarUserUseCase eliminarUserUseCase(UserRepository repo) { 
-      return new EliminarUserUseCase(repo);
-    }
+  public ActualizarUserUseCase actualizarUserUseCase(UserRepository repo) {
+    return new ActualizarUserUseCase(repo);
+  }
 
+  @Bean
+  public EliminarUserUseCase eliminarUserUseCase(UserRepository repo) {
+    return new EliminarUserUseCase(repo);
+  }
 
   @Bean
   public ManagementUserUseCase managementUserUseCase(UserRepository repo) {

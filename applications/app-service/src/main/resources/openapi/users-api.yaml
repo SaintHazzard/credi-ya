@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: User API
+  version: 1.0.0
+  description: API para gestión de usuarios con Spring WebFlux funcional
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+paths:
+  /users/{id}:
+    get:
+      summary: Obtener usuario por ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identificador único del usuario
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: Usuario no encontrado
+
+  /users:
+    get:
+      summary: Listar todos los usuarios
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+
+    post:
+      summary: Crear un usuario
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Error de validación
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      required:
+        - names
+        - lastname
+        - email
+        - salary
+      properties:
+        names:
+          type: string
+          example: Juan
+        lastname:
+          type: string
+          example: Pérez
+        email:
+          type: string
+          format: email
+          example: juan.perez@mail.com
+        salary:
+          type: number
+          format: double
+          example: 3500000
+
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: d290f1ee-6c54-4b01-90e6-d701748f0851

@@ -29,3 +29,8 @@ adapters:
     database: "crediya"
     username: postgres
     password: 1324
+springdoc:
+  swagger-ui:
+    urls:
+      - name: users
+        url: /openapi/users-api.yaml
