@@ -14,8 +14,8 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class UserRouterRest {
   @Bean("userRouterFunction")
   public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
-        return route(GET("/api/users/{id}"), userHandler::listeGetUser)
-                .andRoute(POST("/api/users"), userHandler::listeCreateUser)
+        return route(GET("/api/users/{id}"), userHandler::listenGetUser)
+                .andRoute(POST("/api/users"), userHandler::listenCreateUser)
                 .and(route(GET("/api/users"), userHandler::listenGetAllUsers));
     }
 }

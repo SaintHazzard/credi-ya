@@ -18,7 +18,7 @@ public class ResilienceServiceImpl implements ResilienceService {
     public <T> Mono<T> executeWithResilience(Supplier<Mono<T>> operation) {
         return operation.get()
                 .doOnSubscribe(sub -> log.info("Starting resilient execution"))
-                .delaySubscription(Duration.ofSeconds(3))
+                .delaySubscription(Duration.ofSeconds(10))
                 .retryWhen(
                         Retry.fixedDelay(5, Duration.ofSeconds(2))
                                 .doBeforeRetry(rs -> log.warn("Retrying after failure: {}", rs.failure().getMessage())))

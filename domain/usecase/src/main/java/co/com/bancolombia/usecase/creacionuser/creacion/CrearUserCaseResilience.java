@@ -16,7 +16,13 @@ public class CrearUserCaseResilience implements CrearUsuarioStrategy {
 
     @Override
     public Mono<User> createUser(User user) {
-        return resilience.executeWithResilience(() -> repo.save(user));
+      return resilience.executeWithResilience(() -> Mono.defer(() -> {
+        boolean fail = Math.random() > 0.1;
+        if (fail) {
+          return Mono.error(new RuntimeException("Simulated random failure 🚨"));
+        }
+        return repo.save(user); // éxito
+      }));
     }
 
 

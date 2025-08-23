@@ -7,10 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Example;
 
+import co.com.bancolombia.mappers.UserMapper;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntity;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntityRepository;
-import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.entities.userentity.UserReactiveEntityRepositoryAdapater;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
