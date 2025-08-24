@@ -18,8 +18,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class TxTestHandler {
-  private final ReactiveTx tx;
+  private final ReactiveTx tx; 
   private final DeletegateCrearUser delegate;
+
 
   public Mono<ServerResponse> bulkCreateTest(ServerRequest req) {
     User u1 = User.builder()
@@ -42,11 +43,9 @@ public class TxTestHandler {
         .salaryBase(BigDecimal.valueOf(4400000))
         .build();
 
-    return delegate.createUser(u1)
+    return tx.write(() -> delegate.createUser(u1)
         .then(delegate.createUser(u2))
-        .then(Mono.just("ok"))
-        .flatMap(nada -> ServerResponse.ok().bodyValue("OK"))
-        .onErrorResume(e -> ServerResponse.status(500)
-            .bodyValue("Rollback OK, error: " + e.getMessage()));
+        .then(Mono.just("ok")))
+        .flatMap(nada -> ServerResponse.ok().bodyValue("OK"));
   }
 }

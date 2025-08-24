@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import co.com.bancolombia.model.user.common.ReactiveTx;
+import co.com.bancolombia.model.user.common.ResilienceService;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.ResilienceService;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserStrategy;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;

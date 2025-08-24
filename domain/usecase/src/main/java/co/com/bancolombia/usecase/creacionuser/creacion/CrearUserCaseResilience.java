@@ -2,8 +2,8 @@ package co.com.bancolombia.usecase.creacionuser.creacion;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.common.ReactiveTx;
+import co.com.bancolombia.model.user.common.ResilienceService;
 import co.com.bancolombia.model.user.gateways.UserRepository;
-import co.com.bancolombia.usecase.creacionuser.ResilienceService;
 import reactor.core.publisher.Mono;
 
 public class CrearUserCaseResilience implements CrearUsuarioStrategy {
@@ -23,6 +23,7 @@ public class CrearUserCaseResilience implements CrearUsuarioStrategy {
 
     ));
   }
+
 
   @Override
   public CrearUserStrategy getType() {

@@ -1,4 +1,4 @@
-package co.com.bancolombia.r2dbc.config;
+package co.com.bancolombia.r2dbc.config.transancionalidad;
 
 import java.util.function.Supplier;
 

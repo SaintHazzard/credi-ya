@@ -24,9 +24,9 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 adapters:
   r2dbc:
-    host: "localhost"
+    host: localhost
     port: 5432
-    database: "crediya"
+    database: autenticacion
     username: postgres
     password: 1324
 springdoc:

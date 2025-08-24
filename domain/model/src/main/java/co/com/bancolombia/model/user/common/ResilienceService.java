@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser;
+package co.com.bancolombia.model.user.common;
 
 import java.util.function.Supplier;
 
