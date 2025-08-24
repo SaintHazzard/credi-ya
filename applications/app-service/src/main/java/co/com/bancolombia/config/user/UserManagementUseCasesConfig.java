@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import co.com.bancolombia.model.user.common.ReactiveTx;
 import co.com.bancolombia.model.user.common.ResilienceService;
 import co.com.bancolombia.model.user.gateways.UserRepository;
+import co.com.bancolombia.model.user.validator.UserValidatorPort;
 import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
@@ -18,9 +19,16 @@ import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserStrategy;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUsuarioStrategy;
 import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
+import co.com.bancolombia.usecase.creacionuser.creacion.ValidatingCrearUsuarioDecorator;
+import co.com.bancolombia.usecase.validator.UserValidatorUseCase;
 
 @Configuration
 public class UserManagementUseCasesConfig {
+
+  @Bean
+  public UserValidatorPort userValidator(UserRepository userRepository) {
+    return new UserValidatorUseCase(userRepository);
+  }
 
   @Bean
   public DeletegateCrearUser delegateCrearUserUseCase(List<CrearUsuarioStrategy> strategies) {
@@ -30,14 +38,27 @@ public class UserManagementUseCasesConfig {
     return new DeletegateCrearUser(map);
   }
 
+  /**
+   * Estrategia simple para crear usuarios, decorada con validación
+   */
   @Bean
-  public CrearUsuarioStrategy crearUserSimpleStrategy(UserRepository repo) {
-    return new CrearUserUseCase(repo);
+  public CrearUsuarioStrategy crearUserSimpleStrategy(UserRepository repo, UserValidatorPort validator) {
+    CrearUserUseCase simpleStrategy = new CrearUserUseCase(repo);
+    return new ValidatingCrearUsuarioDecorator(simpleStrategy, validator);
   }
 
+  /**
+   * Estrategia resiliente para crear usuarios, decorada con validación
+   */
   @Bean
-  public CrearUsuarioStrategy crearUserResilienteStrategy(UserRepository repo, ResilienceService resilience, ReactiveTx tx) {
-    return new CrearUserCaseResilience(repo, resilience, tx);
+  public CrearUsuarioStrategy crearUserResilienteStrategy(
+      UserRepository repo,
+      ResilienceService resilience,
+      ReactiveTx tx,
+      UserValidatorPort validator) {
+    
+    CrearUserCaseResilience resilientStrategy = new CrearUserCaseResilience(repo, resilience, tx);
+    return new ValidatingCrearUsuarioDecorator(resilientStrategy, validator);
   }
 
   @Bean
