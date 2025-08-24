@@ -17,20 +17,20 @@ public class DelegateCrearUserService {
      * Crea un usuario utilizando la estrategia simple
      */
     public Mono<User> createUser(User user) {
-        return factory.getStrategy(CrearUserStrategy.SIMPLE).createUser(user);
+        return factory.getStrategy(CrearUserStrategyEnum.SIMPLE).createUser(user);
     }
     
     /**
      * Crea un usuario utilizando la estrategia resiliente
      */
     public Mono<User> createUserWithResilience(User user) {
-        return factory.getStrategy(CrearUserStrategy.RESILIENTE).createUser(user);
+        return factory.getStrategy(CrearUserStrategyEnum.RESILIENTE).createUser(user);
     }
     
     /**
      * Crea un usuario utilizando una estrategia específica
      */
-    public Mono<User> createUserWithStrategy(User user, CrearUserStrategy strategy) {
+    public Mono<User> createUserWithStrategy(User user, CrearUserStrategyEnum strategy) {
         return factory.getStrategy(strategy).createUser(user);
     }
 }

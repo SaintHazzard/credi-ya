@@ -26,7 +26,7 @@ public class CrearUserCaseResilience implements CrearUsuarioStrategy {
 
 
   @Override
-  public CrearUserStrategy getType() {
-    return CrearUserStrategy.RESILIENTE;
+  public CrearUserStrategyEnum getType() {
+    return CrearUserStrategyEnum.RESILIENTE;
   }
 }

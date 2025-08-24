@@ -16,7 +16,7 @@ public class ValidatingCrearUsuarioDecorator implements CrearUsuarioStrategy {
     private final UserValidatorPort validator;
 
     @Override
-    public CrearUserStrategy getType() {
+    public CrearUserStrategyEnum getType() {
         return delegate.getType();
     }
 

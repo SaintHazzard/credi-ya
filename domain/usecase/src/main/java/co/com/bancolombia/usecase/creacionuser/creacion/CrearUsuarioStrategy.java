@@ -4,6 +4,6 @@ import co.com.bancolombia.model.user.User;
 import reactor.core.publisher.Mono;
 
 public interface CrearUsuarioStrategy {
-  CrearUserStrategy getType();
+  CrearUserStrategyEnum getType();
    Mono<User> createUser(User user);
 }

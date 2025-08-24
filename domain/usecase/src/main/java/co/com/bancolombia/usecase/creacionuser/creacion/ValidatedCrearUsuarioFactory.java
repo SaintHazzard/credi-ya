@@ -18,7 +18,7 @@ public class ValidatedCrearUsuarioFactory {
     private final List<CrearUsuarioStrategy> strategies;
     
     // Mapa de estrategias decoradas por tipo
-    private Map<CrearUserStrategy, CrearUsuarioStrategy> decoratedStrategies;
+    private Map<CrearUserStrategyEnum, CrearUsuarioStrategy> decoratedStrategies;
     
     /**
      * Inicializa la fábrica decorando todas las estrategias registradas
@@ -37,7 +37,7 @@ public class ValidatedCrearUsuarioFactory {
      * @param type Tipo de estrategia
      * @return Estrategia decorada con validaciones
      */
-    public CrearUsuarioStrategy getStrategy(CrearUserStrategy type) {
+    public CrearUsuarioStrategy getStrategy(CrearUserStrategyEnum type) {
         return Optional.ofNullable(decoratedStrategies.get(type))
             .orElseThrow(() -> new IllegalArgumentException("Estrategia no encontrada: " + type));
     }

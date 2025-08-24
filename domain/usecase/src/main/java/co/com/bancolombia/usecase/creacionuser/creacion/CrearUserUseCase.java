@@ -17,8 +17,8 @@ public class CrearUserUseCase implements CrearUsuarioStrategy {
   }
 
   @Override
-  public CrearUserStrategy getType() {
-    return CrearUserStrategy.SIMPLE;
+  public CrearUserStrategyEnum getType() {
+    return CrearUserStrategyEnum.SIMPLE;
   }
 
   

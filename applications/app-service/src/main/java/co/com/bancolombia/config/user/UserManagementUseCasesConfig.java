@@ -15,7 +15,7 @@ import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
-import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserStrategy;
+import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserStrategyEnum;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUsuarioStrategy;
 import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
@@ -32,7 +32,7 @@ public class UserManagementUseCasesConfig {
 
   @Bean
   public DeletegateCrearUser delegateCrearUserUseCase(List<CrearUsuarioStrategy> strategies) {
-    Map<CrearUserStrategy, CrearUsuarioStrategy> map = strategies.stream()
+    Map<CrearUserStrategyEnum, CrearUsuarioStrategy> map = strategies.stream()
         .collect(Collectors.toMap(CrearUsuarioStrategy::getType, s -> s));
 
     return new DeletegateCrearUser(map);
