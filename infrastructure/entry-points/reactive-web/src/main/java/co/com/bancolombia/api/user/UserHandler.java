@@ -9,7 +9,7 @@ import co.com.bancolombia.r2dbc.dtos.user.UserDTO;
 import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.helper.utilities.ValidationHandler;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
+import co.com.bancolombia.usecase.creacionuser.creacion.DelegateCrearUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserHandler {
 
-    private final DeletegateCrearUser delegate;
+    private final DelegateCrearUserService delegateService;
     
     private final ManagementUserUseCase managementUserUseCase;
     private final ValidationHandler validationHandler;
@@ -81,7 +81,7 @@ public class UserHandler {
         return req.bodyToMono(UserDTO.class)
                 .flatMap(validationHandler::validate)
                 .map(userMapper::toDomain)
-                .flatMap(delegate::createUser)
+                .flatMap(delegateService::createUser)
                 .map(userMapper::toDto)
                 .flatMap(createdUser -> {
                     log.info("User created successfully with ID: {}", createdUser.getId());

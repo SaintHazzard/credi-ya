@@ -6,17 +6,29 @@ import reactor.core.publisher.Mono;
 
 /**
  * Servicio que delega la creación de usuarios a la estrategia apropiada
- * Utiliza la fábrica de estrategias validadas
+ * Utiliza la fábrica de estrategias
  */
 @RequiredArgsConstructor
 public class DelegateCrearUserService {
 
-    private final ValidatedCrearUsuarioFactory factory;
+    private final StrategyFactory factory;
+    
+    /**
+     * Crea un usuario seleccionando automáticamente la estrategia adecuada
+     * Si el nombre es largo (>25 caracteres), usa la estrategia resiliente
+     * De lo contrario, usa la estrategia simple
+     */
+    public Mono<User> createUser(User user) {
+        if (user.getNames().length() > 25) {
+            return factory.getStrategy(CrearUserStrategyEnum.RESILIENTE).createUser(user);
+        }
+        return factory.getStrategy(CrearUserStrategyEnum.SIMPLE).createUser(user);
+    }
     
     /**
      * Crea un usuario utilizando la estrategia simple
      */
-    public Mono<User> createUser(User user) {
+    public Mono<User> createUserSimple(User user) {
         return factory.getStrategy(CrearUserStrategyEnum.SIMPLE).createUser(user);
     }
     

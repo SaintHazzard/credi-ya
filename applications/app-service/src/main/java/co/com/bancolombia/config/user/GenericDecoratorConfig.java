@@ -1,6 +1,8 @@
 package co.com.bancolombia.config.user;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +18,17 @@ import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUsuarioStrategy;
 import co.com.bancolombia.usecase.creacionuser.creacion.DelegateCrearUserService;
-import co.com.bancolombia.usecase.creacionuser.creacion.ValidatedCrearUsuarioFactory;
+import co.com.bancolombia.usecase.creacionuser.creacion.MultiDecoratorAbstractFactory;
+import co.com.bancolombia.usecase.creacionuser.creacion.StrategyFactory;
+import co.com.bancolombia.usecase.creacionuser.creacion.UserCreationStrategyFactory;
+import co.com.bancolombia.usecase.creacionuser.creacion.ValidatingCrearUsuarioDecorator;
 import co.com.bancolombia.usecase.validator.UserValidatorUseCase;
 
+/**
+ * Ejemplo de configuración usando la fábrica genérica con decoradores
+ */
 @Configuration
-public class UserManagementUseCasesConfig {
+public class GenericDecoratorConfig {
 
   @Bean
   public UserValidatorPort userValidator(UserRepository userRepository) {
@@ -48,22 +56,30 @@ public class UserManagementUseCasesConfig {
   }
   
   /**
-   * Fábrica para decorar automáticamente todas las estrategias con validación
+   * Fábrica que usa genéricos para aplicar decoradores
    */
   @Bean
-  public ValidatedCrearUsuarioFactory validatedCrearUsuarioFactory(
-      UserValidatorPort validator, 
-      List<CrearUsuarioStrategy> strategies) {
-    ValidatedCrearUsuarioFactory factory = new ValidatedCrearUsuarioFactory(validator, strategies);
-    factory.init(); // Inicializa y decora todas las estrategias
-    return factory;
+  public StrategyFactory userCreationStrategyFactory(
+      List<CrearUsuarioStrategy> strategies,
+      UserValidatorPort validator) {
+    
+    // Creamos la lista de decoradores
+    List<Function<CrearUsuarioStrategy, CrearUsuarioStrategy>> decorators = new ArrayList<>();
+    
+    // Añadimos el decorador de validación
+    decorators.add(strategy -> new ValidatingCrearUsuarioDecorator(strategy, validator));
+    
+    // Podríamos añadir más decoradores aquí si los tuviéramos
+    
+    // Creamos la fábrica específica para CrearUsuarioStrategy
+    return new UserCreationStrategyFactory(strategies, decorators);
   }
   
   /**
-   * Servicio delegado que usa la fábrica para acceder a las estrategias validadas
+   * Servicio delegado que usa la fábrica
    */
   @Bean
-  public DelegateCrearUserService delegateCrearUserService(ValidatedCrearUsuarioFactory factory) {
+  public DelegateCrearUserService delegateCrearUserService(StrategyFactory factory) {
     return new DelegateCrearUserService(factory);
   }
   

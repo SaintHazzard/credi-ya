@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Aplica el patrón Decorator a todas las estrategias registradas
  */
 @RequiredArgsConstructor
-public class ValidatedCrearUsuarioFactory {
+public class ValidatedCrearUsuarioFactory implements StrategyFactory {
 
     private final UserValidatorPort validator;
     private final List<CrearUsuarioStrategy> strategies;
@@ -37,6 +37,7 @@ public class ValidatedCrearUsuarioFactory {
      * @param type Tipo de estrategia
      * @return Estrategia decorada con validaciones
      */
+    @Override
     public CrearUsuarioStrategy getStrategy(CrearUserStrategyEnum type) {
         return Optional.ofNullable(decoratedStrategies.get(type))
             .orElseThrow(() -> new IllegalArgumentException("Estrategia no encontrada: " + type));
