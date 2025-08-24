@@ -1,4 +1,4 @@
-package co.com.bancolombia.model.user.validator;
+package co.com.bancolombia.model.common;
 
 import lombok.Builder;
 import lombok.Getter;

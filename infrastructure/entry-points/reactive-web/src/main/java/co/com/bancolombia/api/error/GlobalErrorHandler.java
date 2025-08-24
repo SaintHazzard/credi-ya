@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.com.bancolombia.model.common.DomainException;
 import co.com.bancolombia.model.common.ErrorCode;
-import co.com.bancolombia.model.user.validator.ValidationError.ValidationErrors;
+import co.com.bancolombia.model.common.ValidationError.ValidationErrors;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -102,7 +102,7 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
       return body;
     }
     
-    if (ex instanceof co.com.bancolombia.model.user.validator.ValidationError.ValidationErrors validationErrors) {
+    if (ex instanceof co.com.bancolombia.model.common.ValidationError.ValidationErrors validationErrors) {
       body.put("code", ErrorCode.VALIDATION.name());
       body.put("message", "Validation failed");
       body.put("fieldErrors", validationErrors.getErrors().stream()
@@ -139,7 +139,7 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
     return m;
   }
   
-  private Map<String, Object> validationErrorToMap(co.com.bancolombia.model.user.validator.ValidationError error) {
+  private Map<String, Object> validationErrorToMap(co.com.bancolombia.model.common.ValidationError error) {
     Map<String, Object> m = new LinkedHashMap<>();
     m.put("field", error.getField());
     m.put("message", error.getMessage());

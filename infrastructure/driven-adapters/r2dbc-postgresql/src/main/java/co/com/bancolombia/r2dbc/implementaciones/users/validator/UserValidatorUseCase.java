@@ -1,9 +1,9 @@
 package co.com.bancolombia.r2dbc.implementaciones.users.validator;
 
+import co.com.bancolombia.model.common.ValidationError;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.model.user.validator.UserValidatorPort;
-import co.com.bancolombia.model.user.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class UserValidatorUseCase implements UserValidatorPort {
 
     private final UserRepository userRepository;
-    
+
     // Constantes para validación
     private static final BigDecimal MIN_SALARY = BigDecimal.ZERO;
     private static final BigDecimal MAX_SALARY = new BigDecimal("15000000");
@@ -26,34 +26,20 @@ public class UserValidatorUseCase implements UserValidatorPort {
     public Mono<User> validateUser(User user) {
         // Creamos un builder para acumular errores
         ValidationError.ValidationErrors.Builder errorsBuilder = new ValidationError.ValidationErrors.Builder();
-        
-        // Validar campos requeridos
-        if (user.getNames() == null || user.getNames().trim().isEmpty()) {
-            errorsBuilder.addError("names", "El nombre no puede ser nulo o vacío");
+
+        validateUniqueEmail(user.getEmail())
+                .doOnError(error -> errorsBuilder.addError(user.getEmail().getClass().getName(), error.getMessage()))
+                .subscribe();
+        // validar salario
+        validateSalary(user.getSalaryBase())
+                .doOnError(error -> errorsBuilder.addError(user.getSalaryBase().getClass().getName(), error.getMessage()))
+                .subscribe();
+
+        // validar email
+        if (user.getEmail() == null || !user.getEmail().matches(EMAIL_REGEX)) {
+            errorsBuilder.addError("email", "El correo electrónico no tiene un formato válido");
         }
-        
-        if (user.getLastname() == null || user.getLastname().trim().isEmpty()) {
-            errorsBuilder.addError("lastname", "Los apellidos no pueden ser nulos o vacíos");
-        }
-        
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-            errorsBuilder.addError("email", "El correo electrónico no puede ser nulo o vacío");
-        } else if (!user.getEmail().matches(EMAIL_REGEX)) {
-            errorsBuilder.addError("email", "El formato del correo electrónico es inválido");
-        }
-        
-        // Validar salario
-        if (user.getSalaryBase() == null) {
-            errorsBuilder.addError("salaryBase", "El salario base no puede ser nulo");
-        } else if (user.getSalaryBase().compareTo(MIN_SALARY) < 0 || user.getSalaryBase().compareTo(MAX_SALARY) > 0) {
-            errorsBuilder.addError("salaryBase", "El salario base debe estar entre 0 y 15,000,000");
-        }
-        
-        // Si hay errores, devolver un Mono.error
-        if (errorsBuilder.hasErrors()) {
-            return Mono.error(errorsBuilder.build());
-        }
-        
+
         // Si no hay errores, devolver el usuario
         return Mono.just(user);
     }
@@ -62,14 +48,29 @@ public class UserValidatorUseCase implements UserValidatorPort {
     public Mono<Boolean> validateUniqueEmail(String email) {
         // Buscar si existe un usuario con el mismo email
         return userRepository.findByEmail(email)
-            .hasElement()
-            .flatMap(exists -> {
-                if (exists) {
-                    return Mono.error(new ValidationError.ValidationErrors.Builder()
-                        .addError("email", "El correo electrónico ya está registrado")
-                        .build());
-                }
-                return Mono.just(true);
-            });
+                .hasElement()
+                .flatMap(exists -> {
+                    if (exists) {
+                        return Mono.error(new ValidationError.ValidationErrors.Builder()
+                                .addError("email", "El correo electrónico ya está registrado")
+                                .build());
+                    }
+                    return Mono.just(true);
+                });
+    }
+
+    @Override
+    public Mono<Boolean> validateSalary(BigDecimal salary) {
+        if (salary == null) {
+            return Mono.error(new ValidationError.ValidationErrors.Builder()
+                    .addError("salary", "El salario no puede ser nulo")
+                    .build());
+        }
+        if (salary.compareTo(MIN_SALARY) < 0 || salary.compareTo(MAX_SALARY) > 0) {
+            return Mono.error(new ValidationError.ValidationErrors.Builder()
+                    .addError("salary", "El salario debe estar entre 0 y 15,000,000")
+                    .build());
+        }
+        return Mono.just(true);
     }
 }

@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser.creacion;
+package co.com.bancolombia.usecase.userCases.creacion;
 
 import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.common.ResilienceService;

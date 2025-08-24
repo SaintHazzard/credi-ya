@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser;
+package co.com.bancolombia.usecase.userCases;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;

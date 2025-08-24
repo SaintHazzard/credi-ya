@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser;
+package co.com.bancolombia.usecase.userCases;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.ManagementUserPort;
@@ -18,5 +18,10 @@ public class ManagementUserUseCase implements ManagementUserPort {
 
   public Flux<User> findAllUsers() {
     return userRepository.findAll();
+  }
+
+  @Override
+  public Mono<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
   }
 }

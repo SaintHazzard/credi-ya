@@ -19,7 +19,7 @@ public record UserRecord(
 
                 @NotBlank(message = "El apellido es obligatorio") String lastname,
 
-                @NotNull(message = "La fecha de nacimiento es obligatoria") @Column("birth_date") LocalDate birthDate,
+                @NotNull(message = "La fecha de nacimiento es obligatoria") LocalDate birthDate,
 
                 @NotBlank(message = "La dirección es obligatoria") String address,
 

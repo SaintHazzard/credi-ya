@@ -9,4 +9,7 @@ public interface ManagementUserPort {
   public Mono<User> findUserById(String id);
 
   public Flux<User> findAllUsers();
+
+
+  public Mono<User> findByEmail(String email);
 }

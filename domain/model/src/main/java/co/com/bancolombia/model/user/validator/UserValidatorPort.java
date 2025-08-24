@@ -1,5 +1,7 @@
 package co.com.bancolombia.model.user.validator;
 
+import java.math.BigDecimal;
+
 import co.com.bancolombia.model.user.User;
 import reactor.core.publisher.Mono;
 
@@ -22,4 +24,7 @@ public interface UserValidatorPort {
      * @return Mono con true si el correo no está duplicado, o error si lo está
      */
     Mono<Boolean> validateUniqueEmail(String email);
+
+
+    Mono<Boolean> validateSalary(BigDecimal salary);
 }

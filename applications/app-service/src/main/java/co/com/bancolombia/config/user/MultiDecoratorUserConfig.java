@@ -21,11 +21,10 @@ import co.com.bancolombia.r2dbc.implementaciones.users.ReactiveTxUserDecorator;
 import co.com.bancolombia.r2dbc.implementaciones.users.UserCreationStrategyFactory;
 import co.com.bancolombia.r2dbc.implementaciones.users.ValidatingCrearUsuarioDecorator;
 import co.com.bancolombia.r2dbc.implementaciones.users.validator.UserValidatorUseCase;
-import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
-import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
+import co.com.bancolombia.usecase.userCases.ActualizarUserUseCase;
+import co.com.bancolombia.usecase.userCases.EliminarUserUseCase;
+import co.com.bancolombia.usecase.userCases.creacion.CrearUserCaseResilience;
+import co.com.bancolombia.usecase.userCases.creacion.CrearUserUseCase;
 
 /**
  * Ejemplo de configuración avanzada con múltiples decoradores
