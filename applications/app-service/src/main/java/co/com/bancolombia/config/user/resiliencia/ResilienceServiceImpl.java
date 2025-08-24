@@ -24,4 +24,5 @@ public class ResilienceServiceImpl implements ResilienceService {
                                 .doBeforeRetry(rs -> log.warn("Retrying after failure: {}", rs.failure().getMessage())))
                 .doOnError(err -> log.error("All retries failed: {}", err.getMessage()));
     }
+
 }

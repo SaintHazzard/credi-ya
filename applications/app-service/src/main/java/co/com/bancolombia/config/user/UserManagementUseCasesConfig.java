@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import co.com.bancolombia.model.user.common.ReactiveTx;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
@@ -34,8 +36,8 @@ public class UserManagementUseCasesConfig {
   }
 
   @Bean
-  public CrearUsuarioStrategy crearUserResilienteStrategy(UserRepository repo, ResilienceService resilience) {
-    return new CrearUserCaseResilience(repo, resilience);
+  public CrearUsuarioStrategy crearUserResilienteStrategy(UserRepository repo, ResilienceService resilience, ReactiveTx tx) {
+    return new CrearUserCaseResilience(repo, resilience, tx);
   }
 
   @Bean

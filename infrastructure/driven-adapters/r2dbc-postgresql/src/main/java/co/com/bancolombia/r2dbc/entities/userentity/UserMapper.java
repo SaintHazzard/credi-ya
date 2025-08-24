@@ -1,6 +1,5 @@
 package co.com.bancolombia.r2dbc.entities.userentity;
 
-import java.util.List;
 
 import org.mapstruct.Mapper;
 
@@ -20,12 +19,5 @@ public interface UserMapper {
   UserEntity toEntity(User domain);
 
   UserRecord toRecord(User domain);
-
-
-  List<User> toDomainList(List<UserEntity> entities);
-
-  List<UserEntity> toEntityList(List<User> domains);
-
-  List<UserRecord> toRecordList(List<User> domains);
 
 }
