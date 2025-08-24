@@ -1,8 +1,9 @@
 package co.com.bancolombia.r2dbc.implementaciones.users;
 
-import co.com.bancolombia.model.user.gateways.CrearUserStrategyEnum;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
-import co.com.bancolombia.model.user.gateways.StrategyFactory;
+import co.com.bancolombia.model.common.CrearStrategy;
+import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
+import co.com.bancolombia.model.user.gateways.StrategyUserFactory;
 import co.com.bancolombia.model.user.validator.UserValidatorPort;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -15,14 +16,14 @@ import java.util.stream.Collectors;
  * Aplica el patrón Decorator a todas las estrategias registradas
  */
 @RequiredArgsConstructor
-public class ValidatedCrearUsuarioFactory implements StrategyFactory {
+public class ValidatedCrearUsuarioFactory implements StrategyUserFactory {
 
     private final UserValidatorPort validator;
-    private final List<CrearUsuarioStrategy> strategies;
-    
+    private final List<CrearStrategy<User>> strategies;
+
     // Mapa de estrategias decoradas por tipo
-    private Map<CrearUserStrategyEnum, CrearUsuarioStrategy> decoratedStrategies;
-    
+    private Map<CrearStrategyEnum, CrearStrategy<User>> decoratedStrategies;
+
     /**
      * Inicializa la fábrica decorando todas las estrategias registradas
      */
@@ -30,7 +31,7 @@ public class ValidatedCrearUsuarioFactory implements StrategyFactory {
         // Decoramos todas las estrategias con el validador
         decoratedStrategies = strategies.stream()
             .collect(Collectors.toMap(
-                CrearUsuarioStrategy::getType, 
+                CrearStrategy::getType, 
                 strategy -> new ValidatingCrearUsuarioDecorator(strategy, validator)
             ));
     }
@@ -41,7 +42,7 @@ public class ValidatedCrearUsuarioFactory implements StrategyFactory {
      * @return Estrategia decorada con validaciones
      */
     @Override
-    public CrearUsuarioStrategy getStrategy(CrearUserStrategyEnum type) {
+    public CrearStrategy<User> getStrategy(CrearStrategyEnum type) {
         return Optional.ofNullable(decoratedStrategies.get(type))
             .orElseThrow(() -> new IllegalArgumentException("Estrategia no encontrada: " + type));
     }

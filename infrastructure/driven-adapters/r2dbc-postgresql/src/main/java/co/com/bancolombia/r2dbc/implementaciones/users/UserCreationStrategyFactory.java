@@ -3,33 +3,34 @@ package co.com.bancolombia.r2dbc.implementaciones.users;
 import java.util.List;
 import java.util.function.Function;
 
+import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.helpers.MultiDecoratorAbstractFactory;
-import co.com.bancolombia.model.user.gateways.CrearUserStrategyEnum;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
-import co.com.bancolombia.model.user.gateways.StrategyFactory;
+import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
+import co.com.bancolombia.model.user.gateways.StrategyUserFactory;
 
 /**
  * Implementación específica para CrearUsuarioStrategy que implementa StrategyFactory
  * Utiliza la fábrica genérica MultiDecoratorAbstractFactory
  */
-public class UserCreationStrategyFactory implements StrategyFactory {
+public class UserCreationStrategyFactory implements StrategyUserFactory {
 
-    private final MultiDecoratorAbstractFactory<CrearUsuarioStrategy, CrearUserStrategyEnum> factory;
+    private final MultiDecoratorAbstractFactory<CrearStrategy<User>, CrearStrategyEnum> factory;
     
     public UserCreationStrategyFactory(
-            List<CrearUsuarioStrategy> strategies,
-            List<Function<CrearUsuarioStrategy, CrearUsuarioStrategy>> decorators) {
+            List<CrearStrategy<User>> strategies,
+            List<Function<CrearStrategy<User>, CrearStrategy<User>>> decorators) {
         
         this.factory = new MultiDecoratorAbstractFactory<>(
                 strategies, 
                 decorators,
-                CrearUsuarioStrategy::getType); // Extractor de tipo
+                CrearStrategy::getType); // Extractor de tipo
         
         this.factory.init();
     }
     
     @Override
-    public CrearUsuarioStrategy getStrategy(CrearUserStrategyEnum type) {
+    public CrearStrategy<User> getStrategy(CrearStrategyEnum type) {
         return factory.getStrategy(type);
     }
 }

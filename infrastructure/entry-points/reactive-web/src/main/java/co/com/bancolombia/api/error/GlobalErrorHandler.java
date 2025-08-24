@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.com.bancolombia.model.common.DomainException;
 import co.com.bancolombia.model.common.ErrorCode;
+import co.com.bancolombia.model.user.validator.ValidationError.ValidationErrors;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -61,7 +62,8 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
         default -> HttpStatus.INTERNAL_SERVER_ERROR;
       };
     }
-    if (ex instanceof WebExchangeBindException || ex instanceof ConstraintViolationException) {
+    if (ex instanceof WebExchangeBindException || ex instanceof ConstraintViolationException || 
+        ex instanceof ValidationErrors) {
       return HttpStatus.BAD_REQUEST;
     }
     if (ex instanceof ResponseStatusException rse) {
@@ -99,6 +101,15 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
           .collect(Collectors.toList()));
       return body;
     }
+    
+    if (ex instanceof co.com.bancolombia.model.user.validator.ValidationError.ValidationErrors validationErrors) {
+      body.put("code", ErrorCode.VALIDATION.name());
+      body.put("message", "Validation failed");
+      body.put("fieldErrors", validationErrors.getErrors().stream()
+          .map(this::validationErrorToMap)
+          .collect(Collectors.toList()));
+      return body;
+    }
 
     body.put("code", ErrorCode.INTERNAL.name());
     body.put("message", safeMessage(ex.getMessage()));
@@ -125,6 +136,13 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
       m.put("invalidValue", v.getInvalidValue());
     }
     m.put("message", v.getMessage());
+    return m;
+  }
+  
+  private Map<String, Object> validationErrorToMap(co.com.bancolombia.model.user.validator.ValidationError error) {
+    Map<String, Object> m = new LinkedHashMap<>();
+    m.put("field", error.getField());
+    m.put("message", error.getMessage());
     return m;
   }
 

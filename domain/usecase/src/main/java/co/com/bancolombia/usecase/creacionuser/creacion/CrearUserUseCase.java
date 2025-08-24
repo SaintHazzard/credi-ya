@@ -1,8 +1,8 @@
 package co.com.bancolombia.usecase.creacionuser.creacion;
 
+import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.user.User;
-import co.com.bancolombia.model.user.gateways.CrearUserStrategyEnum;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
+import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -10,17 +10,18 @@ import reactor.core.publisher.Mono;
 
 
 @RequiredArgsConstructor
-public class CrearUserUseCase implements CrearUsuarioStrategy {
+public class CrearUserUseCase implements CrearStrategy<User> {
 
   private final UserRepository userRepository;
 
-  public Mono<User> createUser(User user) {
+  @Override
+  public Mono<User> create(User user) {
     return userRepository.save(user);
   }
 
   @Override
-  public CrearUserStrategyEnum getType() {
-    return CrearUserStrategyEnum.SIMPLE;
+  public CrearStrategyEnum getType() {
+    return CrearStrategyEnum.SIMPLE;
   }
 
   

@@ -7,25 +7,25 @@ import java.util.function.Function;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.common.ReactiveTx;
 import co.com.bancolombia.model.common.ResilienceService;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
+import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.model.user.logger.LoggingPort;
 // import co.com.bancolombia.model.user.security.SecurityPort;
 import co.com.bancolombia.model.user.validator.UserValidatorPort;
-import co.com.bancolombia.r2dbc.config.logs.LogStandarUseCases;
 import co.com.bancolombia.r2dbc.implementaciones.users.DelegateCrearUserService;
 import co.com.bancolombia.r2dbc.implementaciones.users.LoggingCrearUsuarioDecorator;
 import co.com.bancolombia.r2dbc.implementaciones.users.ReactiveTxUserDecorator;
 import co.com.bancolombia.r2dbc.implementaciones.users.UserCreationStrategyFactory;
 import co.com.bancolombia.r2dbc.implementaciones.users.ValidatingCrearUsuarioDecorator;
+import co.com.bancolombia.r2dbc.implementaciones.users.validator.UserValidatorUseCase;
 import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
-import co.com.bancolombia.usecase.validator.UserValidatorUseCase;
 
 /**
  * Ejemplo de configuración avanzada con múltiples decoradores
@@ -43,7 +43,7 @@ public class MultiDecoratorUserConfig {
    * Estrategia simple para crear usuarios
    */
   @Bean
-  public CrearUsuarioStrategy crearUserSimpleStrategy(UserRepository repo) {
+  public CrearStrategy<User> crearUserSimpleStrategy(UserRepository repo) {
     return new CrearUserUseCase(repo);
   }
 
@@ -51,7 +51,7 @@ public class MultiDecoratorUserConfig {
    * Estrategia resiliente para crear usuarios
    */
   @Bean
-  public CrearUsuarioStrategy crearUserResilienteStrategy(
+  public CrearStrategy<User> crearUserResilienteStrategy(
       UserRepository repo,
       ResilienceService resilience) {
 
@@ -63,14 +63,14 @@ public class MultiDecoratorUserConfig {
    */
   @Bean
   public UserCreationStrategyFactory userCreationStrategyFactory(
-      List<CrearUsuarioStrategy> strategies,
+      List<CrearStrategy<User>> strategies,
       UserValidatorPort validator,
-      @org.springframework.beans.factory.annotation.Qualifier("loggingPort") LoggingPort logger,
+     LoggingPort logger,
       ReactiveTx reactiveTx
       ) {
     
     // Creamos la lista de decoradores en el orden que queremos aplicarlos
-    List<Function<CrearUsuarioStrategy, CrearUsuarioStrategy>> decorators = new ArrayList<>();
+    List<Function<CrearStrategy<User>, CrearStrategy<User>>> decorators = new ArrayList<>();
     
     // 1. Primero aplicamos validación
     decorators.add(strategy -> new ValidatingCrearUsuarioDecorator(strategy, validator));
@@ -92,8 +92,10 @@ public class MultiDecoratorUserConfig {
    * Servicio delegado que usa la fábrica para acceder a las estrategias decoradas
    */
   @Bean
-  public DelegateCrearUserService delegateCrearUserService(UserCreationStrategyFactory factory) {
-    return new DelegateCrearUserService(factory);
+  public DelegateCrearUserService delegateCrearUserService(
+      UserCreationStrategyFactory factory,
+      ReactiveTx reactiveTx) {
+    return new DelegateCrearUserService(factory, reactiveTx);
   }
   
   @Bean
@@ -106,9 +108,5 @@ public class MultiDecoratorUserConfig {
     return new EliminarUserUseCase(repo);
   }
 
-  @Bean
-  public ManagementUserUseCase managementUserUseCase(UserRepository repo) {
-    return new ManagementUserUseCase(repo);
-  }
 
 }

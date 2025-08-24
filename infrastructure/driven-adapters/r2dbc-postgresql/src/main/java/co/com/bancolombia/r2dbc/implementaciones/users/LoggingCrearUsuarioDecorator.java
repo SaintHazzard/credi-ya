@@ -1,8 +1,8 @@
 package co.com.bancolombia.r2dbc.implementaciones.users;
 
+import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.user.User;
-import co.com.bancolombia.model.user.gateways.CrearUserStrategyEnum;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
+import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
 import co.com.bancolombia.model.user.logger.LoggingPort;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -11,21 +11,21 @@ import reactor.core.publisher.Mono;
  * Decorador que añade capacidades de logging a cualquier implementación de CrearUsuarioStrategy
  */
 @RequiredArgsConstructor
-public class LoggingCrearUsuarioDecorator implements CrearUsuarioStrategy {
+public class LoggingCrearUsuarioDecorator implements CrearStrategy<User> {
 
-    private final CrearUsuarioStrategy delegate;
+    private final CrearStrategy<User> delegate;
     private final LoggingPort logger;
 
     @Override
-    public CrearUserStrategyEnum getType() {
+    public CrearStrategyEnum getType() {
         return delegate.getType();
     }
 
     @Override
-    public Mono<User> createUser(User user) {
+    public Mono<User> create(User user) {
         logger.info("Iniciando creación de usuario: " + user.getEmail());
         
-        return delegate.createUser(user)
+        return delegate.create(user)
             .doOnSuccess(createdUser -> 
                 logger.info("Usuario creado exitosamente: " + createdUser.getId())
             )

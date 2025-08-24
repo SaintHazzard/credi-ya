@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.validator;
+package co.com.bancolombia.r2dbc.implementaciones.users.validator;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;

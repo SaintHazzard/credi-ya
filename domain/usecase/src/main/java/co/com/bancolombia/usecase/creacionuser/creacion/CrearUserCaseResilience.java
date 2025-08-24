@@ -1,14 +1,14 @@
 package co.com.bancolombia.usecase.creacionuser.creacion;
 
+import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.common.ResilienceService;
 import co.com.bancolombia.model.user.User;
 
-import co.com.bancolombia.model.user.gateways.CrearUserStrategyEnum;
-import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
+import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import reactor.core.publisher.Mono;
 
-public class CrearUserCaseResilience implements CrearUsuarioStrategy {
+public class CrearUserCaseResilience implements CrearStrategy<User> {
   private final UserRepository repo;
   private final ResilienceService resilience;
 
@@ -18,7 +18,7 @@ public class CrearUserCaseResilience implements CrearUsuarioStrategy {
   }
 
   @Override
-  public Mono<User> createUser(User user) {
+  public Mono<User> create(User user) {
     return resilience.executeWithResilience(() -> Mono.defer(() -> {
       boolean fail = Math.random() > 0.4;
       if (fail) {
@@ -30,7 +30,7 @@ public class CrearUserCaseResilience implements CrearUsuarioStrategy {
 
 
   @Override
-  public CrearUserStrategyEnum getType() {
-    return CrearUserStrategyEnum.RESILIENTE;
+  public CrearStrategyEnum getType() {
+    return CrearStrategyEnum.RESILIENTE;
   }
 }

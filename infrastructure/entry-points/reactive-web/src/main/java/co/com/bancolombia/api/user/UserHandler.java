@@ -5,12 +5,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import co.com.bancolombia.model.user.gateways.ManagementUserPort;
 import co.com.bancolombia.r2dbc.dtos.user.UserDTO;
 import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.helper.utilities.ValidationHandler;
 import co.com.bancolombia.r2dbc.implementaciones.users.DelegateCrearUserService;
-import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -20,14 +19,23 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class UserHandler {
 
-    private final DelegateCrearUserService delegateService;
-    
-    private final ManagementUserUseCase managementUserUseCase;
+    private final DelegateCrearUserService userStrategy;
+    private final ManagementUserPort managementUserUseCase;
     private final ValidationHandler validationHandler;
     private final UserMapper userMapper;
+
+    public UserHandler(
+            DelegateCrearUserService userStrategy,
+            ManagementUserPort managementUserUseCase,
+            ValidationHandler validationHandler,
+            UserMapper userMapper) {
+        this.userStrategy = userStrategy;
+        this.managementUserUseCase = managementUserUseCase;
+        this.validationHandler = validationHandler;
+        this.userMapper = userMapper;
+    }
 
     /**
      * Retrieves a user by ID.
@@ -81,15 +89,11 @@ public class UserHandler {
         return req.bodyToMono(UserDTO.class)
                 .flatMap(validationHandler::validate)
                 .map(userMapper::toDomain)
-                .flatMap(delegateService::createUser)
+                .flatMap(userStrategy::create)
                 .map(userMapper::toDto)
                 .flatMap(createdUser -> {
                     log.info("User created successfully with ID: {}", createdUser.getId());
                     return ServerResponse.status(HttpStatus.CREATED).bodyValue(createdUser);
-                })
-                .onErrorResume(e -> {
-                    log.error("Error creating user: {}", e.getMessage());
-                    return ServerResponse.badRequest().bodyValue(e.getMessage());
                 });
     }
 }
