@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser.creacion;
+package co.com.bancolombia.model.user.gateways;
 
 import co.com.bancolombia.model.user.User;
 import reactor.core.publisher.Mono;

@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 
-import co.com.bancolombia.model.user.common.DomainException;
-import co.com.bancolombia.model.user.common.ErrorCode;
+import co.com.bancolombia.model.common.DomainException;
+import co.com.bancolombia.model.common.ErrorCode;
 
 import java.util.Map;
 import java.util.regex.Matcher;

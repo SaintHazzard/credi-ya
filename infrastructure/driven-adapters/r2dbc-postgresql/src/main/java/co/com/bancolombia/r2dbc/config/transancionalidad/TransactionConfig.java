@@ -8,7 +8,7 @@ import org.springframework.transaction.ReactiveTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
-import co.com.bancolombia.model.user.common.ReactiveTx;
+import co.com.bancolombia.model.common.ReactiveTx;
 import io.r2dbc.spi.ConnectionFactory;
 import lombok.RequiredArgsConstructor;
 

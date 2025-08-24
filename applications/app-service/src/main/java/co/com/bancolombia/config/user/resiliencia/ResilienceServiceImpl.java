@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 
-import co.com.bancolombia.model.user.common.ResilienceService;
+import co.com.bancolombia.model.common.ResilienceService;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;

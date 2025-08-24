@@ -1,8 +1,9 @@
 package co.com.bancolombia.api.error;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import co.com.bancolombia.model.user.common.DomainException;
-import co.com.bancolombia.model.user.common.ErrorCode;
+
+import co.com.bancolombia.model.common.DomainException;
+import co.com.bancolombia.model.common.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;

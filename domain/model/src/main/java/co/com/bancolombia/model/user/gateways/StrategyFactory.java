@@ -1,4 +1,5 @@
-package co.com.bancolombia.usecase.creacionuser.creacion;
+package co.com.bancolombia.model.user.gateways;
+
 
 /**
  * Interfaz común para todas las fábricas de estrategias

@@ -1,4 +1,4 @@
-package co.com.bancolombia.usecase.creacionuser.creacion;
+package co.com.bancolombia.model.user.gateways;
 
 public enum CrearUserStrategyEnum {
   SIMPLE,

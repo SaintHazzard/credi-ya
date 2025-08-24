@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import co.com.bancolombia.model.common.ReactiveTx;
 import co.com.bancolombia.model.user.User;
-import co.com.bancolombia.model.user.common.ReactiveTx;
-import co.com.bancolombia.usecase.creacionuser.creacion.DeletegateCrearUser;
+import co.com.bancolombia.r2dbc.implementaciones.users.DelegateCrearUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class TxTestHandler {
   private final ReactiveTx tx; 
-  private final DeletegateCrearUser delegate;
+  private final DelegateCrearUserService delegate;
 
 
   public Mono<ServerResponse> bulkCreateTest(ServerRequest req) {

@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
-import co.com.bancolombia.model.user.common.ReactiveTx;
+import co.com.bancolombia.model.common.ReactiveTx;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 

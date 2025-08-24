@@ -1,5 +1,4 @@
-package co.com.bancolombia.model.user.common;
-
+package co.com.bancolombia.model.common;
 
 import java.util.function.Supplier;
 import org.reactivestreams.Publisher;

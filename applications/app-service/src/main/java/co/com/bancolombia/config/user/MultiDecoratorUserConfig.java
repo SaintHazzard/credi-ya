@@ -7,23 +7,24 @@ import java.util.function.Function;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import co.com.bancolombia.model.user.common.ReactiveTx;
-import co.com.bancolombia.model.user.common.ResilienceService;
+import co.com.bancolombia.model.common.ReactiveTx;
+import co.com.bancolombia.model.common.ResilienceService;
+import co.com.bancolombia.model.user.gateways.CrearUsuarioStrategy;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.model.user.logger.LoggingPort;
 // import co.com.bancolombia.model.user.security.SecurityPort;
 import co.com.bancolombia.model.user.validator.UserValidatorPort;
+import co.com.bancolombia.r2dbc.config.logs.LogStandarUseCases;
+import co.com.bancolombia.r2dbc.implementaciones.users.DelegateCrearUserService;
+import co.com.bancolombia.r2dbc.implementaciones.users.LoggingCrearUsuarioDecorator;
+import co.com.bancolombia.r2dbc.implementaciones.users.ReactiveTxUserDecorator;
+import co.com.bancolombia.r2dbc.implementaciones.users.UserCreationStrategyFactory;
+import co.com.bancolombia.r2dbc.implementaciones.users.ValidatingCrearUsuarioDecorator;
 import co.com.bancolombia.usecase.creacionuser.ActualizarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.EliminarUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.ManagementUserUseCase;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserCaseResilience;
 import co.com.bancolombia.usecase.creacionuser.creacion.CrearUserUseCase;
-import co.com.bancolombia.usecase.creacionuser.creacion.CrearUsuarioStrategy;
-import co.com.bancolombia.usecase.creacionuser.creacion.DelegateCrearUserService;
-import co.com.bancolombia.usecase.creacionuser.creacion.LoggingCrearUsuarioDecorator;
-import co.com.bancolombia.usecase.creacionuser.creacion.MultiDecoratorCrearUsuarioFactory;
-// import co.com.bancolombia.usecase.creacionuser.creacion.SecurityCrearUsuarioDecorator;
-import co.com.bancolombia.usecase.creacionuser.creacion.ValidatingCrearUsuarioDecorator;
 import co.com.bancolombia.usecase.validator.UserValidatorUseCase;
 
 /**
@@ -52,21 +53,20 @@ public class MultiDecoratorUserConfig {
   @Bean
   public CrearUsuarioStrategy crearUserResilienteStrategy(
       UserRepository repo,
-      ResilienceService resilience,
-      ReactiveTx tx) {
-    
-    return new CrearUserCaseResilience(repo, resilience, tx);
+      ResilienceService resilience) {
+
+    return new CrearUserCaseResilience(repo, resilience);
   }
   
   /**
    * Fábrica que aplica múltiples decoradores a las estrategias
    */
   @Bean
-  public MultiDecoratorCrearUsuarioFactory multiDecoratorFactory(
+  public UserCreationStrategyFactory userCreationStrategyFactory(
       List<CrearUsuarioStrategy> strategies,
       UserValidatorPort validator,
-      LoggingPort logger
-      // SecurityPort security
+      @org.springframework.beans.factory.annotation.Qualifier("loggingPort") LoggingPort logger,
+      ReactiveTx reactiveTx
       ) {
     
     // Creamos la lista de decoradores en el orden que queremos aplicarlos
@@ -75,23 +75,24 @@ public class MultiDecoratorUserConfig {
     // 1. Primero aplicamos validación
     decorators.add(strategy -> new ValidatingCrearUsuarioDecorator(strategy, validator));
     
-    // 2. Luego aplicamos seguridad
+    // 2. Luego aplicamos seguridad (comentado por ahora)
     // decorators.add(strategy -> new SecurityCrearUsuarioDecorator(strategy, security));
     
-    // 3. Finalmente aplicamos logging (para registrar después de todas las validaciones)
-    decorators.add(strategy -> new LoggingCrearUsuarioDecorator(strategy, logger));
+    // 3. Aplicamos transacciones reactivas
+    decorators.add(strategy -> new ReactiveTxUserDecorator(strategy, reactiveTx));
     
+    // 4. Finalmente aplicamos logging (para registrar después de todas las validaciones y transacciones)
+    decorators.add(strategy -> new LoggingCrearUsuarioDecorator(strategy, logger));
+
     // Creamos la fábrica con las estrategias y los decoradores
-    MultiDecoratorCrearUsuarioFactory factory = new MultiDecoratorCrearUsuarioFactory(strategies, decorators);
-    factory.init(); // Inicializa y decora todas las estrategias
-    return factory;
+    return new UserCreationStrategyFactory(strategies, decorators);
   }
   
   /**
    * Servicio delegado que usa la fábrica para acceder a las estrategias decoradas
    */
   @Bean
-  public DelegateCrearUserService delegateCrearUserService(MultiDecoratorCrearUsuarioFactory factory) {
+  public DelegateCrearUserService delegateCrearUserService(UserCreationStrategyFactory factory) {
     return new DelegateCrearUserService(factory);
   }
   
@@ -109,4 +110,5 @@ public class MultiDecoratorUserConfig {
   public ManagementUserUseCase managementUserUseCase(UserRepository repo) {
     return new ManagementUserUseCase(repo);
   }
+
 }

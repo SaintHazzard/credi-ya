@@ -1,4 +1,4 @@
-package co.com.bancolombia.model.user.common;
+package co.com.bancolombia.model.common;
 
 
 public enum ErrorCode {
