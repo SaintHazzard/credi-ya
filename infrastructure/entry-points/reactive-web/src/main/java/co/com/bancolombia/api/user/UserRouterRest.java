@@ -17,7 +17,8 @@ public class UserRouterRest {
     public RouterFunction<ServerResponse> routerUserFunction(UserHandler userHandler) {
         return route(GET("/api/v1/users/{id}"), userHandler::listenGetUser)
                 .andRoute(POST("/api/v1/users"), userHandler::listenCreateUser)
-                .and(route(GET("/api/v1/users"), userHandler::listenGetAllUsers));
+                .and(route(GET("/api/v1/users"), userHandler::listenGetAllUsers)
+                        .and(route(GET("/api/v1/users/email/{email}"), userHandler::listenUserByEmail)));
     }
 
     @Bean

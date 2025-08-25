@@ -15,6 +15,10 @@ public class UserUseCasesConfig {
   public UserCreationPort userCreationPort(StrategyUserFactory factory, ReactiveTx reactiveTx) {
     return new DelegateCrearUserService(factory, reactiveTx);
   }
+
+
+
+  
   
 
 }

@@ -1,75 +1,98 @@
 package co.com.bancolombia.r2dbc;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntity;
 import co.com.bancolombia.r2dbc.entities.userentity.UserEntityRepository;
-import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.entities.userentity.UserReactiveEntityRepositoryAdapater;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserReactiveRepositoryAdapterTest {
 
-    @InjectMocks
-    UserReactiveEntityRepositoryAdapater repositoryAdapter;
+    private UserReactiveEntityRepositoryAdapater repositoryAdapter;
 
     @Mock
-    UserEntityRepository repository;
+    private UserEntityRepository repository;
 
     @Mock
-    UserMapper mapper;
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        // Inicializa manualmente el repositoryAdapter con los mocks y la función de mapeo
+        repositoryAdapter = new UserReactiveEntityRepositoryAdapater(repository, objectMapper);
+    }
 
     @Test
     void mustFindValueById() {
+        // Arrange
+        String userId = "1";
+        UserEntity userEntity = mock(UserEntity.class);
+        User user = mock(User.class);
+        
+        // Configura los mocks
+        when(repository.findById(userId)).thenReturn(Mono.just(userEntity));
+        when(objectMapper.map(eq(userEntity), eq(User.class))).thenReturn(user);
 
-        var userEntity = mock(UserEntity.class);
-        when(repository.findById("1")).thenReturn(Mono.just(userEntity));
-        when(mapper.toDomain(userEntity)).thenReturn(mock(User.class));
+        // Act
+        Mono<User> result = repositoryAdapter.findById(userId);
 
-        Mono<User> result = repositoryAdapter.findById("1");
-
+        // Assert
         StepVerifier.create(result)
-                .expectNextMatches(value -> value instanceof User)
+                .expectNext(user)
                 .verifyComplete();
     }
 
     @Test
     void mustFindAllValues() {
-        UserEntity userEntity = org.mockito.Mockito.mock(UserEntity.class);
+        // Arrange
+        UserEntity userEntity = mock(UserEntity.class);
+        User user = mock(User.class);
+        
+        // Configura los mocks
         when(repository.findAll()).thenReturn(Flux.just(userEntity));
-        when(mapper.toDomain(userEntity)).thenReturn(mock(User.class));
+        when(objectMapper.map(eq(userEntity), eq(User.class))).thenReturn(user);
 
+        // Act
         Flux<User> result = repositoryAdapter.findAll();
 
+        // Assert
         StepVerifier.create(result)
-                .expectNextMatches(value -> value instanceof User)
+                .expectNext(user)
                 .verifyComplete();
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void mustFindByExample() {
+        // Arrange
         UserEntity userEntity = mock(UserEntity.class);
         User user = mock(User.class);
-        @SuppressWarnings("unchecked")
-        Example<UserEntity> example = (Example<UserEntity>) any(Example.class);
-        when(repository.findAll(example)).thenReturn(Flux.just(userEntity));
-        when(mapper.toDomain(userEntity)).thenReturn(user);
+        UserEntity exampleEntity = mock(UserEntity.class);
+        
+        // Mocks para trabajar con Example
+        when(objectMapper.map(eq(user), eq(UserEntity.class))).thenReturn(exampleEntity);
+        when(repository.findAll(any(Example.class))).thenReturn(Flux.just(userEntity));
+        when(objectMapper.map(eq(userEntity), eq(User.class))).thenReturn(user);
 
+        // Act
         Flux<User> result = repositoryAdapter.findByExample(user); 
 
+        // Assert
         StepVerifier.create(result)
                 .expectNext(user)
                 .verifyComplete();
@@ -77,16 +100,21 @@ class UserReactiveRepositoryAdapterTest {
 
     @Test
     void mustSaveValue() {
+        // Arrange
         UserEntity userEntity = mock(UserEntity.class);
         User domainObject = mock(User.class);
-        when(mapper.toEntity(domainObject)).thenReturn(userEntity);
+        
+        // Configura los mocks
+        when(objectMapper.map(eq(domainObject), eq(UserEntity.class))).thenReturn(userEntity);
         when(repository.save(userEntity)).thenReturn(Mono.just(userEntity));
-        when(mapper.toDomain(userEntity)).thenReturn(domainObject);
+        when(objectMapper.map(eq(userEntity), eq(User.class))).thenReturn(domainObject);
 
+        // Act
         Mono<User> result = repositoryAdapter.save(domainObject);
 
+        // Assert
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals(domainObject))
+                .expectNext(domainObject)
                 .verifyComplete();
     }
 }

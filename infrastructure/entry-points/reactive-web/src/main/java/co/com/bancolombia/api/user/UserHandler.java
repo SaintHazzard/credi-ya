@@ -100,4 +100,19 @@ public class UserHandler {
                     return ServerResponse.badRequest().bodyValue(e.getMessage());
                 });
     }
+
+
+    public Mono<ServerResponse> listenUserByEmail(ServerRequest req) {
+        String email = req.pathVariable("email");
+        log.debug("Finding user with email: {}", email);
+
+        return managementUserPort.findByEmail(email)
+                .flatMap(user -> ServerResponse.ok().bodyValue(user))
+                .switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).build())
+                .onErrorResume(e -> {
+                    log.error("Error retrieving user with email {}: {}", email, e.getMessage());
+                    return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .bodyValue(e.getMessage());
+                });
+    }
 }

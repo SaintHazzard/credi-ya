@@ -28,4 +28,18 @@ public class ConsultaUserUseCase {
             .doOnError(error -> 
                 logger.error(this.getClass(), "Error al consultar usuario: {}", error, id));
     }
+
+    public Mono<Boolean> findByEmail(String email) {
+        logger.info(this.getClass(), "Consultando si existe usuario con email: {}", email);
+        return userRepository.findByEmail(email)
+            .map(user -> {
+                logger.info(this.getClass(), "Usuario encontrado con email: {}", email);
+                return true;
+            })
+            .defaultIfEmpty(false)
+            .doOnError(error -> 
+                logger.error(this.getClass(), "Error al consultar usuario por email: {}", error, email));
+    }
+
+
 }
