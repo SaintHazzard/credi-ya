@@ -42,8 +42,8 @@ public class MultiDecoratorUserConfig {
    * Estrategia simple para crear usuarios
    */
   @Bean
-  public CrearStrategy<User> crearUserSimpleStrategy(UserRepository repo) {
-    return new CrearUserUseCase(repo);
+  public CrearStrategy<User> crearUserSimpleStrategy(UserRepository repo, UserValidatorPort validator) {
+    return new CrearUserUseCase(repo, validator);
   }
 
   /**

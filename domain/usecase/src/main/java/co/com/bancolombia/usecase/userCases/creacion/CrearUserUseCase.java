@@ -4,6 +4,7 @@ import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
 import co.com.bancolombia.model.user.gateways.UserRepository;
+import co.com.bancolombia.model.user.validator.UserValidatorPort;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -13,10 +14,12 @@ import reactor.core.publisher.Mono;
 public class CrearUserUseCase implements CrearStrategy<User> {
 
   private final UserRepository userRepository;
+  private final UserValidatorPort userValidatorPort;
 
   @Override
   public Mono<User> create(User user) {
-    return userRepository.save(user);
+    return userValidatorPort.validateUser(user)
+        .flatMap(validatedUser -> userRepository.save(validatedUser));
   }
 
   @Override

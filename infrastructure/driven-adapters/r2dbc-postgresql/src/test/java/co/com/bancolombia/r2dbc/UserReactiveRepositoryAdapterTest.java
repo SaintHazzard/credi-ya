@@ -76,7 +76,7 @@ class UserReactiveRepositoryAdapterTest {
                 .verifyComplete();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Test
     void mustFindByExample() {
         // Arrange

@@ -24,7 +24,7 @@ public class UserCreationStrategyFactory implements StrategyUserFactory {
         this.factory = new MultiDecoratorAbstractFactory<>(
                 strategies, 
                 decorators,
-                CrearStrategy::getType); // Extractor de tipo
+                CrearStrategy::getType);
         
         this.factory.init();
     }

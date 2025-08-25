@@ -60,11 +60,9 @@ public class DelegateCrearUserService implements UserCreationPort {
      * Si alguno falla, todos fallan (transacción atómica)
      */
     public Mono<Void> createMultipleUsers(List<User> users) {
-        return reactiveTx.write(() -> {
-            return Flux.fromIterable(users)
-                .flatMap(this::create)
-                .then();
-        });
+        return reactiveTx.write(() -> Flux.fromIterable(users)
+                .concatMap(this::create) // o flatMapSequential(u -> create(u), 1, 1)
+                .then());
     }
     
     /**
