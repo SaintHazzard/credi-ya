@@ -33,4 +33,8 @@ public class User {
 
   private BigDecimal salaryBase;
 
+  private String username;
+
+  private String password;
+
 }

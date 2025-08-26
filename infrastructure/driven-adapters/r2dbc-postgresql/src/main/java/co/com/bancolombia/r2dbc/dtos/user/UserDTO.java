@@ -16,7 +16,7 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
- @Id
+  @Id
   private String id;
 
   @NotBlank(message = "El nombre es obligatorio")
@@ -45,4 +45,5 @@ public class UserDTO {
   @Max(value = 15000000, message = "El salario base no puede ser mayor a 15000000")
   @Min(value = 0, message = "El salario base no puede ser menor a 0")
   private BigDecimal salaryBase;
+
 }

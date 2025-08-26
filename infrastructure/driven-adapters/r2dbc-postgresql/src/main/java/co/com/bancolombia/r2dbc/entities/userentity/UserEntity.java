@@ -49,4 +49,10 @@ public class UserEntity {
   @Min(value = 0, message = "El salario base no puede ser menor a 0")
   @Column("salary_base")
   private BigDecimal salaryBase;
+
+
+
+  private String username;
+
+  private String password;
 }

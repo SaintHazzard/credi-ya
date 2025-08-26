@@ -2,7 +2,7 @@ server:
   port: 8090
 spring:
   application:
-    name: "crediYa"
+    name: autenticacion-service
   devtools:
     add-properties: false
   h2:
@@ -34,3 +34,8 @@ springdoc:
     urls:
       - name: users
         url: /openapi/users-api.yaml
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForGeneratingJWTtokensItShouldBeVerySecureAndAtLeast256BitsLong}
+  expiration: 7200
+  issuer: https://autentication-service:8090/issuer
+  client-id: autentication-client
