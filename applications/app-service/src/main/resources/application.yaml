@@ -3,6 +3,14 @@ server:
 spring:
   application:
     name: autenticacion-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/autenticacion
+    username: postgres
+    password: 1324
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
   devtools:
     add-properties: false
   h2:
@@ -20,6 +28,21 @@ management:
     health:
       probes:
         enabled: true
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForGeneratingJWTtokensItShouldBeVerySecureAndAtLeast256BitsLong}
+  expiration: 7200
+  issuer: https://autentication-service:8090/issuer
+  client-id: autentication-client
+oauth2:
+  clients:
+    - client-id: web-client
+      client-secret: web-client-secret
+      grant-types: authorization_code,refresh_token
+      redirect-uris: http://localhost:8080/login/oauth2/code/custom,http://localhost:4200/callback
+    - client-id: gateway-client
+      client-secret: gateway-client-secret
+      grant-types: client_credentials
+      scopes: read,write
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 adapters:
@@ -34,8 +57,3 @@ springdoc:
     urls:
       - name: users
         url: /openapi/users-api.yaml
-jwt:
-  secret: ${JWT_SECRET:mySecretKeyForGeneratingJWTtokensItShouldBeVerySecureAndAtLeast256BitsLong}
-  expiration: 7200
-  issuer: https://autentication-service:8090/issuer
-  client-id: autentication-client

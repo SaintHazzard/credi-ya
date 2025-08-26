@@ -11,6 +11,7 @@ import co.com.bancolombia.model.common.CrearStrategy;
 import co.com.bancolombia.model.common.ReactiveTx;
 import co.com.bancolombia.model.common.ResilienceService;
 import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.gateways.PasswordEncoderPort;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.model.user.logger.LoggingPort;
 // import co.com.bancolombia.model.user.security.SecurityPort;
@@ -42,8 +43,9 @@ public class MultiDecoratorUserConfig {
    * Estrategia simple para crear usuarios
    */
   @Bean
-  public CrearStrategy<User> crearUserSimpleStrategy(UserRepository repo, UserValidatorPort validator) {
-    return new CrearUserUseCase(repo, validator);
+  public CrearStrategy<User> crearUserSimpleStrategy(UserRepository repo, UserValidatorPort validator,
+      PasswordEncoderPort passwordEncoder) {
+    return new CrearUserUseCase(repo, validator, passwordEncoder);
   }
 
   /**
@@ -56,7 +58,7 @@ public class MultiDecoratorUserConfig {
 
     return new CrearUserCaseResilience(repo, resilience);
   }
-  
+
   /**
    * Fábrica que aplica múltiples decoradores a las estrategias
    */
@@ -64,29 +66,30 @@ public class MultiDecoratorUserConfig {
   public UserCreationStrategyFactory userCreationStrategyFactory(
       List<CrearStrategy<User>> strategies,
       UserValidatorPort validator,
-     LoggingPort logger,
-      ReactiveTx reactiveTx
-      ) {
-    
+      LoggingPort logger,
+      ReactiveTx reactiveTx) {
+
     // Creamos la lista de decoradores en el orden que queremos aplicarlos
     List<Function<CrearStrategy<User>, CrearStrategy<User>>> decorators = new ArrayList<>();
-    
+
     // 1. Primero aplicamos validación
     decorators.add(strategy -> new ValidatingCrearUsuarioDecorator(strategy, validator));
-    
+
     // 2. Luego aplicamos seguridad (comentado por ahora)
-    // decorators.add(strategy -> new SecurityCrearUsuarioDecorator(strategy, security));
-    
+    // decorators.add(strategy -> new SecurityCrearUsuarioDecorator(strategy,
+    // security));
+
     // 3. Aplicamos transacciones reactivas
     decorators.add(strategy -> new ReactiveTxUserDecorator(strategy, reactiveTx));
-    
-    // 4. Finalmente aplicamos logging (para registrar después de todas las validaciones y transacciones)
+
+    // 4. Finalmente aplicamos logging (para registrar después de todas las
+    // validaciones y transacciones)
     decorators.add(strategy -> new LoggingCrearUsuarioDecorator(strategy, logger));
 
     // Creamos la fábrica con las estrategias y los decoradores
     return new UserCreationStrategyFactory(strategies, decorators);
   }
-  
+
   /**
    * Servicio delegado que usa la fábrica para acceder a las estrategias decoradas
    */
@@ -96,7 +99,7 @@ public class MultiDecoratorUserConfig {
       ReactiveTx reactiveTx) {
     return new DelegateCrearUserService(factory, reactiveTx);
   }
-  
+
   @Bean
   public ActualizarUserUseCase actualizarUserUseCase(UserRepository repo) {
     return new ActualizarUserUseCase(repo);
@@ -106,6 +109,5 @@ public class MultiDecoratorUserConfig {
   public EliminarUserUseCase eliminarUserUseCase(UserRepository repo) {
     return new EliminarUserUseCase(repo);
   }
-
 
 }

@@ -1,21 +1,39 @@
 server:
   port: 8090
-  
+
 spring:
   application:
     name: autenticacion-service
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/autenticacion
     username: postgres
-    password: postgres
+    password: 1324
   sql:
     init:
       mode: always
       schema-locations: classpath:schema.sql
-  
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: true
+      path: "/h2"
+  profiles:
+    include: null
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
 jwt:
   secret: ${JWT_SECRET:mySecretKeyForGeneratingJWTtokensItShouldBeVerySecureAndAtLeast256BitsLong}
-  expiration: 3600  # Token expiration time in seconds (1 hour)
+  expiration: 7200  # Token expiration time in seconds (2 hours)
   issuer: https://autentication-service:8090/issuer
   client-id: autentication-client
 
@@ -31,4 +49,18 @@ oauth2:
       scopes: read,write
       
 cors:
-  allowed-origins: http://localhost:4200,http://localhost:8080
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+adapters:
+  r2dbc:
+    host: localhost
+    port: 5432
+    database: autenticacion
+    username: postgres
+    password: 1324
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: users
+        url: /openapi/users-api.yaml
