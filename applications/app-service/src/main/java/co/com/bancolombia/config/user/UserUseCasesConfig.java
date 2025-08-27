@@ -11,10 +11,10 @@ import co.com.bancolombia.r2dbc.implementaciones.users.DelegateCrearUserService;
 @Configuration
 public class UserUseCasesConfig {
   
-  @Bean
-  public UserCreationPort userCreationPort(StrategyUserFactory factory, ReactiveTx reactiveTx) {
-    return new DelegateCrearUserService(factory, reactiveTx);
-  }
+  // @Bean
+  // public UserCreationPort userCreationPort(StrategyUserFactory factory, ReactiveTx reactiveTx) {
+  //   return new DelegateCrearUserService(factory, reactiveTx);
+  // }
 
 
 

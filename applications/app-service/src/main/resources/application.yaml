@@ -29,7 +29,7 @@ management:
       probes:
         enabled: true
 jwt:
-  secret: ${JWT_SECRET:mySecretKeyForGeneratingJWTtokensItShouldBeVerySecureAndAtLeast256BitsLong}
+  secret: ${JWT_SECRET:4SvHz+DwliPeAJJEejIUXl8nRbLjHQF97byyPD8kyRI=}
   expiration: 7200
   issuer: https://autentication-service:8090/issuer
   client-id: autentication-client

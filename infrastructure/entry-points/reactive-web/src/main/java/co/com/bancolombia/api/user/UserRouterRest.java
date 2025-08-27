@@ -26,4 +26,9 @@ public class UserRouterRest {
         return route(POST("/api/v1/users/bulk"), bulkCreate::bulkCreateTest);
     }
 
+
+    // routerFunction
+
+    
+
 }

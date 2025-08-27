@@ -2,6 +2,8 @@ package co.com.bancolombia.r2dbc.implementaciones.users;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import co.com.bancolombia.model.common.ReactiveTx;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.CrearStrategyEnum;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
  * Utiliza la fábrica de estrategias
  */
 @RequiredArgsConstructor
+@Service
 public class DelegateCrearUserService implements UserCreationPort {
 
     private final StrategyUserFactory factory;

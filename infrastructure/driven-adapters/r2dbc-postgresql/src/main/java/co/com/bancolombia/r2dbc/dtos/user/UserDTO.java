@@ -46,4 +46,11 @@ public class UserDTO {
   @Min(value = 0, message = "El salario base no puede ser menor a 0")
   private BigDecimal salaryBase;
 
+
+
+  private String username;
+
+
+  private String password;
+
 }

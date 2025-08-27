@@ -1,6 +1,8 @@
 package co.com.bancolombia.api.auth;
 
 import co.com.bancolombia.usecase.userCases.AuthUseCase;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +14,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/issuer")
+@Slf4j
 public class OAuth2Controller {
 
   private final JwtProvider jwtProvider;
@@ -87,7 +90,9 @@ public class OAuth2Controller {
     if (clientId == null) {
       clientId = defaultClientId;
     }
-
+    log.info("Token request for client_id: {}", clientId);
+    log.info("Token request for grant_type: {}", grantType);
+    log.info("Token request for client_secret: {}", clientSecret);
     switch (grantType) {
       case "authorization_code":
         return handleAuthorizationCodeGrant(code, redirectUri, clientId);
@@ -164,12 +169,7 @@ public class OAuth2Controller {
   }
 
   private Mono<ResponseEntity<TokenResponse>> handleClientCredentialsGrant(String clientId, String clientSecret) {
-    // En una implementación real, validaríamos el clientId y clientSecret contra la
-    // base de datos
-
-    // Para esta demo, aceptamos un cliente predefinido
     if ("gateway-client".equals(clientId) && "gateway-client-secret".equals(clientSecret)) {
-      // Generar access token para el cliente
       String accessToken = jwtProvider.generateToken(clientId, Arrays.asList("CLIENT"));
 
       return Mono.just(ResponseEntity.ok(

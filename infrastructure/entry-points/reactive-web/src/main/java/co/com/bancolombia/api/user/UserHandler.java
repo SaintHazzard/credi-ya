@@ -94,10 +94,6 @@ public class UserHandler {
                 .flatMap(createdUser -> {
                     log.info("User created successfully with ID: {}", createdUser.getId());
                     return ServerResponse.status(HttpStatus.CREATED).bodyValue(createdUser);
-                })
-                .onErrorResume(e -> {
-                    log.error("Error creating user: {}", e.getMessage());
-                    return ServerResponse.badRequest().bodyValue(e.getMessage());
                 });
     }
 

@@ -10,9 +10,9 @@ import co.com.bancolombia.usecase.userCases.ManagementUserUseCase;
 @Configuration
 public class UserManagementUseCasesConfig {
 
-  @Bean
-  public ManagementUserPort managementUserPort(UserRepository repo) {
-    return new ManagementUserUseCase(repo);
-  }
+  // @Bean
+  // public ManagementUserPort managementUserPort(UserRepository repo) {
+  //   return new ManagementUserUseCase(repo);
+  // }
 
 }

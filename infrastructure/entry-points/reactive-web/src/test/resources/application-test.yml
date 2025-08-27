@@ -1,0 +1,21 @@
+spring:
+  security:
+    user:
+      name: testuser
+      password: testpassword
+      roles:
+        - USER
+        - ADMIN
+  main:
+    allow-bean-definition-overriding: true
+
+# Configuración JWT para pruebas
+jwt:
+  secret: c2VjcmV0LXRlc3QtdmFsdWUtZm9yLXRlc3RpbmctcHVycG9zZXMtb25seQ==
+  expiration: 3600
+  issuer: crediya-test
+  client-id: test-client
+
+logging:
+  level:
+    org.springframework.security: DEBUG
