@@ -5,15 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import co.com.bancolombia.api.user.UserHandler;
 import co.com.bancolombia.api.user.UserRouterRest;
-import reactor.core.publisher.Mono;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class UserRouterRestTest {
@@ -25,18 +24,18 @@ class UserRouterRestTest {
     private UserRouterRest userRouterRest;
 
     @Test
-    void routerFunctionShouldMapToHandler() {
-        // Arrange
-        ServerResponse mockResponse = ServerResponse.status(HttpStatus.OK).build().block();
-        when(userHandler.listenGetUser(any())).thenReturn(Mono.just(mockResponse));
-        when(userHandler.listenCreateUser(any())).thenReturn(Mono.just(mockResponse));
-
+    void routerFunctionShouldMapToCorrectEndpoints() {
+        // Act
         RouterFunction<ServerResponse> routerFunction = userRouterRest.routerUserFunction(userHandler);
-
-        // Verificar que las rutas están mapeadas correctamente es complicado en una
-        // prueba unitaria
-        // Por lo general, esto se prueba mejor en pruebas de integración
-        // Este test solo verifica que se devuelve una RouterFunction no nula
-        assert routerFunction != null;
+        
+        // Assert
+        assertNotNull(routerFunction, "Router function should not be null");
+        
+        String routerString = routerFunction.toString();
+        assertTrue(routerString.contains("/api/v1/users"), "Router should contain the user base path");
+        assertTrue(routerString.contains("GET"), "Router should handle GET requests");
+        assertTrue(routerString.contains("POST"), "Router should handle POST requests");
+        
+        assertTrue(routerString.contains("/{id}"), "Router should handle path with ID parameter");
     }
 }

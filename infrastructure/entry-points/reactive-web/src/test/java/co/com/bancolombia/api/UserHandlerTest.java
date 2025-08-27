@@ -7,7 +7,6 @@ import co.com.bancolombia.model.user.gateways.UserCreationPort;
 import co.com.bancolombia.r2dbc.dtos.user.UserDTO;
 import co.com.bancolombia.r2dbc.entities.userentity.UserMapper;
 import co.com.bancolombia.r2dbc.helper.utilities.ValidationHandler;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,8 +21,6 @@ import reactor.test.StepVerifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,23 +42,15 @@ public class UserHandlerTest {
   @InjectMocks
   private UserHandler userHandler;
 
-  @BeforeEach
-  void setUp() {
-    // Configuración común para los mocks
-    when(validationHandler.validate(any())).thenAnswer(inv -> Mono.just(inv.getArgument(0)));
-  }
-
   @Test
   void listenGetUserByIdShouldReturnUser() {
     // Arrange
     User user = createTestUser();
-    UserDTO userDTO = createTestUserDTO();
 
     ServerRequest request = mock(ServerRequest.class);
     when(request.pathVariable("id")).thenReturn("123");
 
     when(managementUserPort.findUserById("123")).thenReturn(Mono.just(user));
-    when(userMapper.toDto(user)).thenReturn(userDTO);
 
     // Act
     Mono<ServerResponse> response = userHandler.listenGetUser(request);
@@ -81,6 +70,7 @@ public class UserHandlerTest {
     ServerRequest request = mock(ServerRequest.class);
     when(request.bodyToMono(UserDTO.class)).thenReturn(Mono.just(userDTO));
 
+    when(validationHandler.validate(userDTO)).thenReturn(Mono.just(userDTO));
     when(userMapper.toDomain(userDTO)).thenReturn(user);
     when(userCreationPort.create(user)).thenReturn(Mono.just(user));
     when(userMapper.toDto(user)).thenReturn(userDTO);
