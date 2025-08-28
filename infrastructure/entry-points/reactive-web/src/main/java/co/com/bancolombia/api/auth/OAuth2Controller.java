@@ -128,7 +128,7 @@ public class OAuth2Controller {
     authorizationCodes.remove(code);
 
     // Generar tokens
-    String accessToken = jwtProvider.generateToken("user_from_auth_code", Arrays.asList("USER"));
+    String accessToken = jwtProvider.generateToken("user_from_auth_code", Arrays.asList("USER"), "web-client");
     String refreshToken = UUID.randomUUID().toString();
     refreshTokens.put(refreshToken, "user_from_auth_code");
 
@@ -146,7 +146,7 @@ public class OAuth2Controller {
     String username = refreshTokens.get(refreshToken);
 
     // Generar nuevo access token
-    String accessToken = jwtProvider.generateToken(username, Arrays.asList("USER"));
+    String accessToken = jwtProvider.generateToken(username, Arrays.asList("USER"), "web-client");
 
     return Mono.just(ResponseEntity.ok(
         new TokenResponse(null, accessToken, refreshToken, expirationTime, null)));
@@ -157,7 +157,7 @@ public class OAuth2Controller {
     return authUseCase.authenticateUser(username, password)
         .map(user -> {
           // Generar tokens
-          String accessToken = jwtProvider.generateToken(user.getUsername(), Arrays.asList("USER"));
+          String accessToken = jwtProvider.generateToken(user.getUsername(), Arrays.asList("USER"), "web-client");
           String refreshToken = UUID.randomUUID().toString();
           refreshTokens.put(refreshToken, user.getUsername());
 
@@ -170,7 +170,7 @@ public class OAuth2Controller {
 
   private Mono<ResponseEntity<TokenResponse>> handleClientCredentialsGrant(String clientId, String clientSecret) {
     if ("gateway-client".equals(clientId) && "gateway-client-secret".equals(clientSecret)) {
-      String accessToken = jwtProvider.generateToken(clientId, Arrays.asList("CLIENT"));
+      String accessToken = jwtProvider.generateToken(clientId, Arrays.asList("CLIENT"), "web-client");
 
       return Mono.just(ResponseEntity.ok(
           new TokenResponse(null, accessToken, null, expirationTime, "read write")));

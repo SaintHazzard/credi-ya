@@ -12,13 +12,15 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @Configuration
 public class UserRouterRest {
 
-    @Bean
 
+    
+    @Bean
     public RouterFunction<ServerResponse> routerUserFunction(UserHandler userHandler) {
         return route(GET("/api/v1/users/{id}"), userHandler::listenGetUser)
                 .andRoute(POST("/api/v1/users"), userHandler::listenCreateUser)
-                .and(route(GET("/api/v1/users"), userHandler::listenGetAllUsers)
-                        .and(route(GET("/api/v1/users/email/{email}"), userHandler::listenUserByEmail)));
+                .andRoute(GET("/api/v1/users").and(req -> req.queryParam("email").isPresent()),
+                        userHandler::listenUserByEmail)
+                .andRoute(GET("/api/v1/users"), userHandler::listenGetAllUsers);
     }
 
     @Bean

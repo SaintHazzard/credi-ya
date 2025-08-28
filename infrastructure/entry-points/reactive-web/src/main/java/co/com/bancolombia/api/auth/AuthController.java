@@ -36,10 +36,10 @@ public class AuthController {
                 .map(user -> {
                     // En un caso real, usaríamos los roles del usuario
                     if (request.getUsername().equals("admin1324")) {
-                        String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("ADMIN", "USER"));
+                        String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("ADMIN", "USER"), "gateway-client");
                         return ResponseEntity.ok(new AuthResponse(token));
                     }
-                    String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("USER"));
+                    String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("USER"), "web-client");
                     return ResponseEntity.ok(new AuthResponse(token));
                 })
                 .onErrorResume(error -> Mono

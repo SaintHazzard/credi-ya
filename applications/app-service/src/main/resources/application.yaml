@@ -29,9 +29,47 @@ management:
       probes:
         enabled: true
 jwt:
-  secret: ${JWT_SECRET:4SvHz+DwliPeAJJEejIUXl8nRbLjHQF97byyPD8kyRI=}
+  private-key: |-
+    -----BEGIN PRIVATE KEY-----
+    MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDhbLNvz1DH7DEo
+    VYko2HfnvZjQDBhKqjZTsnHfxihxczFH6xo6GNVUd78OCEh7wTBjy5/Qv9+8lkef
+    o1iQKaL70NBliu/MWl3BtG73Hz9eLmHWAfXa4axjQsMFWLAJH1L16WSG7jJWlg3y
+    fGkTNkGktZ7+lzyyxJ1jXCeim0eburp+kRcrlkGGANM0MAdT5RdfC/FAbQ2dexbB
+    iWkGdfkpj0gS1cr350gBH3LTMWiTzwS/t1fsP+V6O0zb8WwBWel0xdW+e90rY35+
+    G3xaqqY1R9QFkxzPVZL+NJtnmh7UxbSKhBcFNEueOQbRwyD6i7DLDAW+zjGExDmc
+    YbU830hXAgMBAAECggEAFo1V7Ecs2TtvdY4NIUl6wXPt4E59dabOtZPiIZWFAUiZ
+    cwz5vDs0yHUMZ557hen/adR6whsYCplsQ/PHDfEkbZXn62i5cdPOkmz3NwDoyYbR
+    YeQjUQkHwoxwz02emuMH3TNCy97zqUbs0UgSCQqCCbTj2auOtoHGDyUuj+2B/fnB
+    0X1pe7R2yx6Y/nSkBkAj71hJ1AkN7nvMWIP1oRSe/SnSOuK0pqi8jAlvd/9SETEJ
+    ODBbogWdLQ4DBcaFa+YqUTpc7D8ABpvN//+18y4TZTMY/R80yvyHK8g4cm2aSPO0
+    fgeox3sJmSHNLKhtqLdRD59P98prs2nnOx9HCoHhOQKBgQDzch0AhekiTjaw+KSw
+    Bm9D4e37c3eiZNdqVa+2q3YNgB5aO3641LqDYNETMQlDAObFF1Ph6VocxjSpjmn9
+    ma+HbB0DwWG/waVdp/2QKu7SMQ/FRAUsBEma6yyA1mHWoWLOxXo3XfmwGElTKImn
+    hA8QXUDVu/erg6hC44CqJ0r8iQKBgQDtDK3CYg1PVoC+aVHPBPxjY/aTh9prnDcY
+    bXp1sniCToggR48Ab4g+M8zXQEdXZSRmu7Z/Ywlsr8M+Kh0Bfc0B8pyD39wytT5F
+    O/VHTYEy57dbc6vQQs4xf2zo211i3dGwxrErnDmv1vCHgKILcoFSIEY8K24J7NI4
+    oSilV0Gl3wKBgGJFQy3N4IEnn24qwJgJ0OpPDjj9sGJOYKKc+jQ73IiwmhAEii/k
+    N3IHJ/6eQcXZXE5dD1BXWTfaTrHPOjvTyQZafw/gBSxZ5/35bSLAIe2ZPmt7/LZ6
+    +JdfrXRIlfAE75TWJHKrLbqG4zp9V6vWZBpP+ncMzHpgyBBQM8T73Yo5AoGBAJnB
+    qI815GY6uKVJURwTotWhCFYnP2CfYglBMbZX/dyfraIqaDIjJd8a4FoaQmwImbTd
+    OwGjroBF/UE8NbY68Be8UxMiyARIFUz5GB6Ywh3PuNnjzGT4gCARBAaCCy/Oq22b
+    Y13jJnPM2hU6NWFxczpe3s+2Z9ieOLksp12fnGBHAoGAD0PACq3YgVoEW+gad7gP
+    qWFhNPDEZ1r2MEHIfoAeVt8JVKTEZjYd9jQzd9Ym0pddVzbGFgXTMNMBUyv9hC9u
+    AcfQTrr3cKEriUkNKtnivCVf7NlQl7KMWJ1Z07mtPalCXWYGcgOr0o26TyETwM+N
+    OaGWXBMNIU7Hb5UkNtd9L+c=
+    -----END PRIVATE KEY-----
+  public-key: |-
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4Wyzb89Qx+wxKFWJKNh3
+    572Y0AwYSqo2U7Jx38YocXMxR+saOhjVVHe/DghIe8EwY8uf0L/fvJZHn6NYkCmi
+    +9DQZYrvzFpdwbRu9x8/Xi5h1gH12uGsY0LDBViwCR9S9elkhu4yVpYN8nxpEzZB
+    pLWe/pc8ssSdY1wnoptHm7q6fpEXK5ZBhgDTNDAHU+UXXwvxQG0NnXsWwYlpBnX5
+    KY9IEtXK9+dIAR9y0zFok88Ev7dX7D/lejtM2/FsAVnpdMXVvnvdK2N+fht8Wqqm
+    NUfUBZMcz1WS/jSbZ5oe1MW0ioQXBTRLnjkG0cMg+ouwywwFvs4xhMQ5nGG1PN9I
+    VwIDAQAB
+    -----END PUBLIC KEY-----
   expiration: 7200
-  issuer: https://autentication-service:8090/issuer
+  issuer: http://localhost:8090/issuer
   client-id: autentication-client
 oauth2:
   clients:
@@ -41,6 +79,10 @@ oauth2:
       redirect-uris: http://localhost:8080/login/oauth2/code/custom,http://localhost:4200/callback
     - client-id: gateway-client
       client-secret: gateway-client-secret
+      grant-types: client_credentials
+      scopes: read,write
+    - client-id: solicitudes-client
+      client-secret: solicitudes-secret
       grant-types: client_credentials
       scopes: read,write
 cors:

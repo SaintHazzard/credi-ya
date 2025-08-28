@@ -99,7 +99,8 @@ public class UserHandler {
 
 
     public Mono<ServerResponse> listenUserByEmail(ServerRequest req) {
-        String email = req.pathVariable("email");
+        String email = req.queryParam("email")
+                .orElseThrow(() -> new IllegalArgumentException("Email query parameter is required"));
         log.debug("Finding user with email: {}", email);
 
         return managementUserPort.findByEmail(email)
