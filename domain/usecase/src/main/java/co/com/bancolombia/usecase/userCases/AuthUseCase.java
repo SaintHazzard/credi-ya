@@ -12,10 +12,15 @@ public class AuthUseCase {
 
   private final PasswordEncoderPort passwordEncoder;
 
-
   public Mono<User> authenticateUser(String username, String password) {
-        return userRepository.findByUsername(username)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")));
-    }
+    return userRepository.findByUsername(username)
+        .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+        .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")));
+  }
+
+  public Mono<User> authenticateUserWithEmail(String email, String password) {
+    return userRepository.findByEmail(email)
+        .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+        .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")));
+  }
 }

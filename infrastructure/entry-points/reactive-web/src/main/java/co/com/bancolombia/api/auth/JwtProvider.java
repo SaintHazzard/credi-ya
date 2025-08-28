@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties.Tomcat.Resour
 import org.springframework.stereotype.Component;
 
 import co.com.bancolombia.api.config.JwtProperties;
+import co.com.bancolombia.model.user.User;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -64,11 +65,8 @@ public class JwtProvider {
         }
     }
 
-    
-
     @Value("${jwt.secret:}")
     private String secretB64;
-
 
     private RSAPublicKey loadPublicKey(String publicKeyPEM) throws NoSuchAlgorithmException, InvalidKeySpecException {
         publicKeyPEM = publicKeyPEM
@@ -101,6 +99,35 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(bytes);
     }
 
+    public String generateToken(User user, List<String> roles, String azp) {
+        Instant now = Instant.now();
+        Instant exp = now.plusSeconds(expirationSeconds);
+
+        if (useRSA) {
+            return Jwts.builder()
+                    .subject(user.getUsername())
+                    .issuer(issuer)
+                    .issuedAt(Date.from(now))
+                    .expiration(Date.from(exp))
+                    .claim("roles", roles)
+                    .claim("azp", azp)
+                    .claim("email", user.getEmail())
+                    .signWith(privateKey, Jwts.SIG.RS256)
+                    .compact();
+        } else {
+            return Jwts.builder()
+                    .subject(user.getUsername())
+                    .issuer(issuer)
+                    .issuedAt(Date.from(now))
+                    .expiration(Date.from(exp))
+                    .claim("roles", roles)
+                    .claim("azp", azp)
+                    .claim("email", user.getEmail())
+                    .signWith(key(), Jwts.SIG.HS256)
+                    .compact();
+        }
+    }
+
     public String generateToken(String username, List<String> roles, String azp) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(expirationSeconds);
@@ -122,7 +149,7 @@ public class JwtProvider {
                     .issuedAt(Date.from(now))
                     .expiration(Date.from(exp))
                     .claim("roles", roles)
-                    .claim("azp", azp) // 👈 igual acá
+                    .claim("azp", azp)
                     .signWith(key(), Jwts.SIG.HS256)
                     .compact();
         }

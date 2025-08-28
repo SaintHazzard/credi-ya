@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1")
 public class AuthController {
 
     private final JwtProvider jwtProvider;
@@ -36,10 +36,22 @@ public class AuthController {
                 .map(user -> {
                     // En un caso real, usaríamos los roles del usuario
                     if (request.getUsername().equals("admin1324")) {
-                        String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("ADMIN", "USER"), "gateway-client");
+                        String token = jwtProvider.generateToken(user, Arrays.asList("ADMIN", "USER"),
+                                "gateway-client");
                         return ResponseEntity.ok(new AuthResponse(token));
                     }
-                    String token = jwtProvider.generateToken(user.getUsername(), Arrays.asList("USER"), "web-client");
+                    String token = jwtProvider.generateToken(user, Arrays.asList("USER"), "web-client");
+                    return ResponseEntity.ok(new AuthResponse(token));
+                })
+                .onErrorResume(error -> Mono
+                        .error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials")));
+    }
+
+    @PostMapping("login/email")
+    public Mono<ResponseEntity<AuthResponse>> loginWithEmail(@RequestBody AuthRequest request) {
+        return authUseCase.authenticateUserWithEmail(request.getUsername(), request.getPassword())
+                .map(user -> {
+                    String token = jwtProvider.generateToken(user, Arrays.asList("USER"), "web-client");
                     return ResponseEntity.ok(new AuthResponse(token));
                 })
                 .onErrorResume(error -> Mono
